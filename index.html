@@ -263,6 +263,96 @@ body::after{content:'';position:fixed;bottom:-15%;right:-10%;width:50vw;height:5
   background: rgba(125,211,250,0.28);
   color: white;
 }
+
+.comp-section {
+  margin-top: 1.25rem;
+  border-top: 1.5px dashed var(--gray-200);
+  padding-top: 1rem;
+}
+.comp-section.comp-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.75rem 0;
+}
+.comp-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.comp-icon { font-size: 16px; }
+.comp-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--green-700, #0F6E56);
+}
+.comp-note-text {
+  font-size: 12px;
+  color: var(--gray-400);
+  font-style: italic;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+.comp-note {
+  display: block;
+  font-size: 11px;
+  color: #B45309;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.edit-qty-btn {
+  background: none;
+  border: 1px solid rgba(24,95,165,0.3);
+  border-radius: 6px;
+  padding: 1px 5px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--blue-600);
+  transition: background 0.15s;
+  vertical-align: middle;
+  line-height: 1.4;
+}
+.edit-qty-btn:hover {
+  background: var(--blue-50);
+  border-color: var(--blue-400);
+}
+#edit-qty-popup input:focus {
+  border-color: #185FA5;
+}
+
+.fat-info-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  color: #8896A8;
+  padding: 0 2px;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+
+.fat-info-btn:hover { color: #0F6E56; background: #E1F5EE; text-decoration: none; }
+.fat-popup {
+  position: fixed;
+  z-index: 9999;
+  background: white;
+  border: 1.5px solid #9FE1CB;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(8,80,65,0.15);
+  padding: 0.9rem 1rem;
+  width: 240px;
+  animation: tipIn 0.22s cubic-bezier(0.34,1.56,0.64,1);
+}
+.fat-popup-title { font-size: 12px; font-weight: 600; color: #085041; margin-bottom: 6px; }
+.fat-popup-body { font-size: 12px; color: #2C3A4A; line-height: 1.55; }
+.fat-popup-close { position: absolute; top: 7px; right: 9px; background: none; border: none; cursor: pointer; color: #8896A8; font-size: 16px; }
+
+.food-table button[style*="text-decoration:none"],
+.food-table button { text-decoration: none !important; }
+.grasas-val { color: #A855C8; font-size:12px; }
+
 </style>
 </head>
 <body>
@@ -304,50 +394,49 @@ body::after{content:'';position:fixed;bottom:-15%;right:-10%;width:50vw;height:5
   <!-- Password box -->
   <div style="display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:300px;">
     <div style="font-size:13px;color:rgba(255,255,255,0.55);letter-spacing:0.05em;text-transform:uppercase;font-weight:500;">Ingresá tu clave</div>
-    <div style="display:flex;gap:10px;width:100%;">
-      <input
-        id="lock-input"
-        type="password"
-        placeholder="••••"
-        maxlength="20"
-        autocomplete="off"
-        onkeydown="if(event.key==='Enter') unlockApp()"
-        style="
-          flex:1;
-          background:rgba(255,255,255,0.1);
-          border:1.5px solid rgba(255,255,255,0.25);
-          border-radius:12px;
-          padding:12px 18px;
-          font-family:'DM Sans',sans-serif;
-          font-size:16px;
-          color:white;
-          outline:none;
-          transition:border-color 0.2s;
-          text-align:center;
-          letter-spacing:0.15em;
-        "
-        onfocus="this.style.borderColor='rgba(125,211,250,0.6)'"
-        onblur="this.style.borderColor='rgba(255,255,255,0.25)'"
-      >
-      <button
-        onclick="unlockApp()"
-        style="
-          background:rgba(125,211,250,0.18);
-          border:1.5px solid rgba(125,211,250,0.4);
-          border-radius:12px;
-          color:#7DD3FA;
-          font-family:'DM Sans',sans-serif;
-          font-size:14px;
-          font-weight:600;
-          padding:12px 20px;
-          cursor:pointer;
-          transition:background 0.2s,color 0.2s;
-          white-space:nowrap;
-        "
-        onmouseover="this.style.background='rgba(125,211,250,0.32)';this.style.color='white'"
-        onmouseout="this.style.background='rgba(125,211,250,0.18)';this.style.color='#7DD3FA'"
-      >Ok →</button>
-    </div>
+    <input
+      id="lock-input"
+      type="password"
+      placeholder="••••"
+      maxlength="20"
+      autocomplete="off"
+      onkeydown="if(event.key==='Enter') unlockApp()"
+      style="
+        width:100%;
+        background:rgba(255,255,255,0.1);
+        border:1.5px solid rgba(255,255,255,0.25);
+        border-radius:12px;
+        padding:14px 18px;
+        font-family:'DM Sans',sans-serif;
+        font-size:18px;
+        color:white;
+        outline:none;
+        transition:border-color 0.2s;
+        text-align:center;
+        letter-spacing:0.2em;
+        margin-bottom:12px;
+      "
+      onfocus="this.style.borderColor='rgba(125,211,250,0.6)'"
+      onblur="this.style.borderColor='rgba(255,255,255,0.25)'"
+    >
+    <button
+      onclick="unlockApp()"
+      style="
+        width:100%;
+        background:rgba(125,211,250,0.18);
+        border:1.5px solid rgba(125,211,250,0.4);
+        border-radius:12px;
+        color:#7DD3FA;
+        font-family:'DM Sans',sans-serif;
+        font-size:15px;
+        font-weight:600;
+        padding:13px;
+        cursor:pointer;
+        transition:background 0.2s,color 0.2s;
+      "
+      onmouseover="this.style.background='rgba(125,211,250,0.32)';this.style.color='white'"
+      onmouseout="this.style.background='rgba(125,211,250,0.18)';this.style.color='#7DD3FA'"
+    >Ok →</button>
     <div id="lock-error" style="
       font-size:12px;color:#F09595;
       min-height:18px;
@@ -502,6 +591,140 @@ const TIPOS={
   ML:{label:'Mixto lento (HC + proteína)',desc:'Absorción lenta + aporte proteico significativo (≥5g). La proteína que aporta cuenta para tu total diario — no la cuentes dos veces.'}
 };
 
+
+const COMPLEMENTS = {
+  'entreno-0': {title:'Complementos proteicos y grasas saludables',note:'Sumá uno o más según tu plan. La proteína y los HC se cuentan en tus totales diarios.',items:[
+    ['Huevo entero','1 unidad (50g)',6.0,6.0,0,''],
+    ['Clara de huevo','1 clara (25g)',3.0,0,0,''],
+    ['Yogur griego','100g',13.0,0.5,3,'EDIT:100:g:3:13.0'],
+    ['Queso descremado untable','1 cda sopera (25g)',3.5,0.5,1.5,'EDIT:25:g:1.5:3.5'],
+    ['Queso magro port salut','1 trozo DNI (25g)',5.5,4.5,0,''],
+    ['Palta','½ unidad pequeña (60g)',1.0,12.0,3,'FATS:Palta — rica en omega 9 (ácido oleico, ~70%). Efecto antiinflamatorio, mejora absorción de vitaminas liposolubles. Excelente fuente de grasas saludables para el deportista.'],
+    ['Nueces','1 unidad (10g)',1.5,4.5,1,'FATS:Nueces — la mejor fuente vegetal de omega 3 ALA (~2,5g por 20g). También aportan omega 6 y polifenoles antioxidantes. Excelentes para la salud cerebral y cardiovascular.'],
+    ['Almendras','12 unidades (20g)',4.0,9.0,2,'FATS:Almendras — ricas en omega 9 (ácido oleico, ~65%) y vitamina E antioxidante. Perfil antiinflamatorio. Bajo impacto glucémico.'],
+    ['Semillas mix','1 cda sopera (10g)',1.5,4.0,1,'FATS:Semillas — según el mix: chía y lino son ricas en omega 3 ALA; girasol y sésamo en omega 6. Variar tipos para cubrir distintos perfiles de ácidos grasos.'],
+    ['Mantequilla de maní','1 cda sopera (20g)',5.0,9.0,3,'FATS:Mantequilla de maní — mix de omega 6 (~30%) y omega 9 (~50%). Aporte de grasas insaturadas saludables. Elegir versión sin azúcar ni aceites parcialmente hidrogenados.'],
+    ['Maní pelado','1 cda sopera (20g)',4.5,9.0,3,'FATS:Maní — alto en omega 6 (~30%) y omega 9 (~50%). Buena fuente de grasas insaturadas y resveratrol. Moderación por densidad calórica.'],
+  ]},
+  'entreno-1': {title:'Complementos proteicos',note:'Priorizá proteínas magras. Limitá grasas — enlentecen la digestión antes del esfuerzo.',items:[
+    ['Huevo entero','1 unidad (50g)',6.0,6.0,0,''],
+    ['Clara de huevo','1 clara (25g)',3.0,0,0,''],
+    ['Yogur griego','100g',13.0,0.5,3,'EDIT:100:g:3:13.0'],
+    ['Queso descremado untable','1 cda sopera (25g)',3.5,0.5,1.5,'EDIT:25:g:1.5:3.5'],
+    ['Queso magro port salut','1 trozo DNI (25g)',5.5,4.5,0,''],
+    ['Palta (moderado)','¼ unidad (30g)',0.5,6.0,1,'⚠️ Cerca del esfuerzo, usá poca cantidad — las grasas enlentecen la digestión. FATS:Palta — rica en omega 9 (ácido oleico). Evitar en grandes cantidades antes del esfuerzo por el enlentecimiento digestivo.'],
+    ['Nueces (moderado)','1 unidad (10g)',1.5,4.5,1,'⚠️ Cerca del esfuerzo, moderá la cantidad — las grasas enlentecen la digestión.'],
+  ]},
+  'entreno-3': {title:'Complementos proteicos',note:'El post-entrenamiento es el momento más importante para la proteína. Combiná con los HC de arriba.',items:[
+    ['Huevo entero','1 unidad (50g)',6.0,6.0,0,''],
+    ['Clara de huevo','1 clara (25g)',3.0,0,0,''],
+    ['Yogur griego','100g',13.0,0.5,3,'EDIT:100:g:3:13.0'],
+    ['Queso magro port salut','1 trozo DNI (25g)',5.5,4.5,0,''],
+    ['Queso descremado untable','1 cda sopera (25g)',3.5,0.5,1.5,'EDIT:25:g:1.5:3.5'],
+    ['Atún al natural','1 lata (120g)',28.0,0,0,''],
+    ['Pollo cocido (pechuga)','100g cocido',27.0,1.0,0,''],
+    ['Whey protein','1 scoop (30g)',22.0,1.0,2,''],
+    ['Palta (pequeña cantidad)','¼ unidad (30g)',0.5,6.0,1,'FAT:Omega-9 predominante (ácido oleico). Grasa monoinsaturada de calidad.'],
+  ]},
+  'entreno-4': {title:'Complementos proteicos y grasas saludables',note:'En comidas principales podés incorporar proteína y grasas con más libertad.',items:[
+    ['Huevo entero','1 unidad (50g)',6.0,6.0,0,''],
+    ['Clara de huevo','1 clara (25g)',3.0,0,0,''],
+    ['Pechuga de pollo','100g cocido',27.0,1.0,0,''],
+    ['Carne vacuna magra','100g cocido',26.0,3.0,0,''],
+    ['Pescado blanco','100g cocido',22.0,1.0,0,''],
+    ['Pescado graso (salmón/caballa/atún)','100g cocido',20.0,13.0,0,'FATS:Pescado graso — fuente principal de omega-3 EPA y DHA (~2-3g por porción). Antiinflamatorio, cardioprotector y clave para la recuperación muscular.'],
+    ['Carne de cerdo magra','100g cocido',26.0,3.5,0,''],
+    ['Atún al natural','1 lata (120g)',28.0,0,0,''],
+    ['Queso magro port salut','1 trozo DNI (25g)',5.5,4.5,0,''],
+    ['Palta','½ unidad pequeña (60g)',1.0,12.0,3,'FATS:Palta — rica en omega 9 (ácido oleico, ~70%). Efecto antiinflamatorio, mejora absorción de vitaminas liposolubles. Excelente fuente de grasas saludables para el deportista.'],
+    ['Nueces','1 unidad (10g)',1.5,4.5,1,'FATS:Nueces — la mejor fuente vegetal de omega 3 ALA (~2,5g por 20g). También aportan omega 6 y polifenoles antioxidantes. Excelentes para la salud cerebral y cardiovascular.'],
+    ['Semillas mix','1 cda sopera (10g)',1.5,4.0,1,'FATS:Semillas — según el mix: chía y lino son ricas en omega 3 ALA; girasol y sésamo en omega 6. Variar tipos para cubrir distintos perfiles de ácidos grasos.'],
+    ['Aceite de oliva','1 cda sopera (10ml)',0,10.0,0,'FATS:Aceite de oliva virgen extra — fuente de omega 9 (ácido oleico, ~73%). Efecto antiinflamatorio y cardioprotector. Usarlo crudo o al final de las preparaciones.'],
+    ['Aceite de girasol alto oleico','1 cda sopera (10ml)',0,10.0,0,'FATS:Aceite de girasol alto oleico — alto en omega 9 (~80%). Mejor perfil que el girasol común. Más estable al calor.'],
+    ['Aceite de coco','1 cda sopera (10ml)',0,10.0,0,'FATS:Aceite de coco — rico en grasas saturadas de cadena media (TCM, ~90%). Metabolismo rápido como energía. Usar con moderación y en contextos específicos.'],
+    ['Cerdo magro (lomo/peceto)','100g cocido',22.0,4.0,0,''],
+    ['Pescado graso (salmón/atún/caballa)','100g cocido',20.0,13.0,0,'FATS:Pescado graso — fuente principal de omega 3 de cadena larga (EPA y DHA, ~2-3g por porción). Esenciales, antiinflamatorios, mejoran la recuperación muscular y la salud cardiovascular. Consumir mínimo 2 veces por semana.'],
+    ['Sardinas en lata (al natural)','1 lata (100g)',20.0,11.0,0,'FATS:Sardinas — excelente fuente de omega 3 EPA y DHA (~2g por porción). Económica y práctica. Preferir al natural o en aceite de oliva.'],
+  ]},
+  'entreno-5': {title:'Complementos proteicos',note:'Las colaciones son oportunidades para sumar proteína entre comidas principales.',items:[
+    ['Huevo duro','1 unidad (50g)',6.0,6.0,0,''],
+    ['Clara cocida','1 clara (25g)',3.0,0,0,''],
+    ['Yogur griego','100g',13.0,0.5,3,'EDIT:100:g:3:13.0'],
+    ['Queso descremado untable','1 cda sopera (25g)',3.5,0.5,1.5,'EDIT:25:g:1.5:3.5'],
+    ['Queso magro port salut','1 trozo DNI (25g)',5.5,4.5,0,''],
+    ['Palta','¼ unidad (30g)',0.5,6.0,1,'FATS:Palta — rica en omega 9 (ácido oleico, ~70%). Efecto antiinflamatorio, mejora absorción de vitaminas liposolubles.'],
+    ['Nueces','1 unidad (10g)',1.5,4.5,1,'FATS:Nueces — la mejor fuente vegetal de omega 3 ALA (~2,5g por 20g). También aportan omega 6 y polifenoles antioxidantes. Excelentes para la salud cerebral y cardiovascular.'],
+    ['Almendras','12 unidades (20g)',4.0,9.0,2,'FATS:Almendras — ricas en omega 9 (ácido oleico, ~65%) y vitamina E antioxidante. Perfil antiinflamatorio. Bajo impacto glucémico.'],
+    ['Mantequilla de maní','1 cda sopera (20g)',5.0,9.0,3,'FATS:Mantequilla de maní — mix de omega 6 (~30%) y omega 9 (~50%). Aporte de grasas insaturadas saludables. Elegir versión sin azúcar ni aceites parcialmente hidrogenados.'],
+    ['Maní pelado','1 cda sopera (20g)',4.5,9.0,3,'FATS:Maní — alto en omega 6 (~30%) y omega 9 (~50%). Buena fuente de grasas insaturadas y resveratrol. Moderación por densidad calórica.'],
+  ]},
+  'descanso-0': {title:'Complementos proteicos y grasas saludables',note:'En días de descanso podés incorporar grasas con más libertad en todas las comidas.',items:[
+    ['Huevo entero','1 unidad (50g)',6.0,6.0,0,''],
+    ['Clara de huevo','1 clara (25g)',3.0,0,0,''],
+    ['Yogur griego','100g',13.0,0.5,3,'EDIT:100:g:3:13.0'],
+    ['Queso descremado untable','1 cda sopera (25g)',3.5,0.5,1.5,'EDIT:25:g:1.5:3.5'],
+    ['Queso magro port salut','1 trozo DNI (25g)',5.5,4.5,0,''],
+    ['Palta','½ unidad pequeña (60g)',1.0,12.0,3,'FATS:Palta — rica en omega 9 (ácido oleico, ~70%). Efecto antiinflamatorio, mejora absorción de vitaminas liposolubles. Excelente fuente de grasas saludables para el deportista.'],
+    ['Nueces','1 unidad (10g)',1.5,4.5,1,'FATS:Nueces — la mejor fuente vegetal de omega 3 ALA (~2,5g por 20g). También aportan omega 6 y polifenoles antioxidantes. Excelentes para la salud cerebral y cardiovascular.'],
+    ['Almendras','12 unidades (20g)',4.0,9.0,2,'FATS:Almendras — ricas en omega 9 (ácido oleico, ~65%) y vitamina E antioxidante. Perfil antiinflamatorio. Bajo impacto glucémico.'],
+    ['Semillas mix','1 cda sopera (10g)',1.5,4.0,1,'FATS:Semillas — según el mix: chía y lino son ricas en omega 3 ALA; girasol y sésamo en omega 6. Variar tipos para cubrir distintos perfiles de ácidos grasos.'],
+    ['Mantequilla de maní','1 cda sopera (20g)',5.0,9.0,3,'FATS:Mantequilla de maní — mix de omega 6 (~30%) y omega 9 (~50%). Aporte de grasas insaturadas saludables. Elegir versión sin azúcar ni aceites parcialmente hidrogenados.'],
+    ['Maní pelado','1 cda sopera (20g)',4.5,9.0,3,'FATS:Maní — alto en omega 6 (~30%) y omega 9 (~50%). Buena fuente de grasas insaturadas y resveratrol. Moderación por densidad calórica.'],
+  ]},
+  'descanso-1': {title:'Complementos proteicos y grasas saludables',note:'En comidas principales podés incorporar proteína y grasas con libertad.',items:[
+    ['Huevo entero','1 unidad (50g)',6.0,6.0,0,''],
+    ['Pechuga de pollo','100g cocido',27.0,1.0,0,''],
+    ['Carne vacuna magra','100g cocido',26.0,3.0,0,''],
+    ['Pescado blanco','100g cocido',22.0,1.0,0,''],
+    ['Pescado graso (salmón/caballa/atún)','100g cocido',20.0,13.0,0,'FATS:Pescado graso — fuente principal de omega-3 EPA y DHA (~2-3g por porción). Antiinflamatorio, cardioprotector y clave para la recuperación muscular.'],
+    ['Carne de cerdo magra','100g cocido',26.0,3.5,0,''],
+    ['Atún al natural','1 lata (120g)',28.0,0,0,''],
+    ['Queso magro port salut','1 trozo DNI (25g)',5.5,4.5,0,''],
+    ['Palta','½ unidad pequeña (60g)',1.0,12.0,3,'FATS:Palta — rica en omega 9 (ácido oleico, ~70%). Efecto antiinflamatorio, mejora absorción de vitaminas liposolubles. Excelente fuente de grasas saludables para el deportista.'],
+    ['Nueces','1 unidad (10g)',1.5,4.5,1,'FATS:Nueces — la mejor fuente vegetal de omega 3 ALA (~2,5g por 20g). También aportan omega 6 y polifenoles antioxidantes. Excelentes para la salud cerebral y cardiovascular.'],
+    ['Semillas mix','1 cda sopera (10g)',1.5,4.0,1,'FATS:Semillas — según el mix: chía y lino son ricas en omega 3 ALA; girasol y sésamo en omega 6. Variar tipos para cubrir distintos perfiles de ácidos grasos.'],
+    ['Aceite de oliva','1 cda sopera (10ml)',0,10.0,0,'FATS:Aceite de oliva virgen extra — fuente de omega 9 (ácido oleico, ~73%). Efecto antiinflamatorio y cardioprotector. Usarlo crudo o al final de las preparaciones.'],
+    ['Aceite de girasol alto oleico','1 cda sopera (10ml)',0,10.0,0,'FATS:Aceite de girasol alto oleico — alto en omega 9 (~80%). Mejor perfil que el girasol común. Más estable al calor.'],
+    ['Aceite de coco','1 cda sopera (10ml)',0,10.0,0,'FATS:Aceite de coco — rico en grasas saturadas de cadena media (TCM, ~90%). Metabolismo rápido como energía. Usar con moderación.'],
+    ['Cerdo magro (lomo/peceto)','100g cocido',22.0,4.0,0,''],
+    ['Pescado graso (salmón/atún/caballa)','100g cocido',20.0,13.0,0,'FATS:Pescado graso — fuente principal de omega 3 de cadena larga (EPA y DHA, ~2-3g por porción). Esenciales, antiinflamatorios, mejoran la recuperación muscular y la salud cardiovascular. Consumir mínimo 2 veces por semana.'],
+    ['Sardinas en lata (al natural)','1 lata (100g)',20.0,11.0,0,'FATS:Sardinas — excelente fuente de omega 3 EPA y DHA (~2g por porción). Económica y práctica. Preferir al natural o en aceite de oliva.'],
+  ]},
+  'descanso-2': {title:'Complementos proteicos',note:'Las colaciones en días de descanso ayudan a mantener el aporte proteico sin sumar demasiados HC.',items:[
+    ['Huevo duro','1 unidad (50g)',6.0,6.0,0,''],
+    ['Yogur griego','100g',13.0,0.5,3,'EDIT:100:g:3:13.0'],
+    ['Queso magro port salut','1 trozo DNI (25g)',5.5,4.5,0,''],
+    ['Queso descremado untable','1 cda sopera (25g)',3.5,0.5,1.5,'EDIT:25:g:1.5:3.5'],
+    ['Palta','¼ unidad (30g)',0.5,6.0,1,'FATS:Palta — rica en omega 9 (ácido oleico, ~70%). Efecto antiinflamatorio, mejora absorción de vitaminas liposolubles.'],
+    ['Nueces','1 unidad (10g)',1.5,4.5,1,'FATS:Nueces — la mejor fuente vegetal de omega 3 ALA (~2,5g por 20g). También aportan omega 6 y polifenoles antioxidantes. Excelentes para la salud cerebral y cardiovascular.'],
+    ['Almendras','12 unidades (20g)',4.0,9.0,2,'FATS:Almendras — ricas en omega 9 (ácido oleico, ~65%) y vitamina E antioxidante. Perfil antiinflamatorio. Bajo impacto glucémico.'],
+    ['Mantequilla de maní','1 cda sopera (20g)',5.0,9.0,3,'FATS:Mantequilla de maní — mix de omega 6 (~30%) y omega 9 (~50%). Aporte de grasas insaturadas saludables. Elegir versión sin azúcar ni aceites parcialmente hidrogenados.'],
+    ['Maní pelado','1 cda sopera (20g)',4.5,9.0,3,'FATS:Maní — alto en omega 6 (~30%) y omega 9 (~50%). Buena fuente de grasas insaturadas y resveratrol. Moderación por densidad calórica.'],
+  ]},
+};
+
+function addComp(ckey, compKey, ci){
+  const parts = compKey.split('-');
+  const dayId = parts[0]; const gi = parseInt(parts[1]);
+  counts[ckey] = (counts[ckey]||0) + 1;
+  updateAll();
+  // Update row
+  const comp = COMPLEMENTS[compKey];
+  if(!comp) return;
+  const f = comp.items[ci];
+  const row = document.getElementById('row-'+ckey);
+  if(!row) return;
+  const cnt = counts[ckey];
+  row.className = 'selected';
+  const nameCell = row.cells[0];
+  const badge = nameCell.querySelector('.count-badge');
+  const noteSpan = nameCell.querySelector('.comp-note');
+  const noteTxt = noteSpan ? noteSpan.outerHTML : makeNoteHTML(f[5]);
+  const baseName = f[0];
+  if(badge) badge.textContent = cnt;
+  else nameCell.innerHTML = baseName + noteTxt + `<span class="count-badge">${cnt}</span>`;
+}
+
 const DAYS=[
   {
     id:'entreno',
@@ -510,71 +733,79 @@ const DAYS=[
     groups:[
       {name:'Desayuno / Merienda',sub:'Complejos principalmente si entrenás tarde; algunos rápidos si entrenás pronto.',foods:[
         ['Avena','4 cdas soperas (40g)',25,4,'ML'],
-        ['Pan integral','2 rebanadas (60g)',25,5,'ML'],
-        ['Pan lactal blanco','2 rebanadas (50g)',25,4,'AR'],
-        ['Pan árabe blanco','1 unidad (60g)',30,6,'AR'],
-        ['Granola sin azúcar','½ taza (30g)',20,3,'AL'],
-        ['Copos de maíz sin azúcar','1 taza (25g)',20,2,'AR'],
+        ['Pan integral','1 rebanada (25g)',10,2.5,'ML'],
+        ['Pan lactal blanco','1 rebanada (25g)',15,2.0,'AR'],
+        ['Pan árabe blanco','1 unidad (60g)',30,6.0,'AR'],
+        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL'],
+        ['Copos de maíz sin azúcar','1 taza (30g)',20,2.7,'AR'],
         ['Galletitas integrales','5 unidades (30g)',20,3,'AL'],
         ['Tostadas de arroz inflado','3 unidades (30g)',25,2,'AR'],
-        ['Miel','1 cda postre (15g)',12,0,'AR'],
-        ['Mermelada sin azúcar','1 cda sopera (20g)',10,0,'AR'],
-        ['Dulce de leche','2 cdas postre (30g)',20,2,'AR'],
-        ['Leche descremada','1 vaso (200ml)',10,6,'MR'],
-        ['Yogur descremado','1 pote (200g)',20,8,'MR'],
+    ['Copos de maíz sin azúcar','1 taza (30g)',20,2.7,'AR'],
+        ['Miel','1 cda postre (15g)',10,0,'AR'],
+        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR'],
+    ['Mermelada común','1 cda sopera (20g)',15,0,'AR'],
+        ['Dulce de leche','1 cda postre (15g)',10,1.0,'AR'],
+        ['Leche descremada','1 vaso (200ml)',10,6.0,'MR','EDIT:200:ml:10:6.0'],
+        ['Yogur descremado','100g',10,4.0,'MR','EDIT:100:g:10:4.0'],
         ['Yogur firme descremado','1 pote (100g)',10,10,'MR'],
-        ['Banana chica','1 unidad (100g)',20,1,'AR'],
-        ['Manzana / Pera','1 unidad (150g)',20,0,'AL'],
-        ['Naranja','1 unidad grande (200g)',20,1,'AL'],
-        ['Kiwi','2 unidades (150g)',20,1,'AL'],
-        ['Frutillas','1 taza (200g)',15,1,'AL'],
-        ['Durazno / Damasco','2 unidades (150g)',15,1,'AL'],
-        ['Leche chocolatada','1 vaso (200ml)',20,6,'MR'],
+    ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
+    ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
+        ['Banana','1 unidad (100g)',20,1.0,'AR'],
+        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL'],
+        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL'],
+        ['Kiwi','1 unidad (75g)',10,0.5,'AL'],
+        ['Frutillas','7 unidades (100g)',10,0.5,'AL'],
+        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL'],
+        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0'],
+    ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
+    ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
       ]},
       {name:'Pre-Entrenamiento',sub:'Moderado a alto IG, fácil digestión, baja fibra y grasa.',foods:[
-        ['Banana mediana','1 unidad (120g)',25,1,'AR'],
-        ['Dátiles','3 unidades (30g)',20,1,'AR'],
-        ['Pasas de uva','2 cdas soperas (30g)',20,1,'AR'],
-        ['Uvas','1 taza (150g)',25,1,'AR'],
-        ['Pan blanco lactal','2 rebanadas (50g)',25,4,'AR'],
-        ['Pan árabe blanco','1 unidad (60g)',30,6,'AR'],
+        ['Banana','1 unidad (100g)',20,1.0,'AR'],
+        ['Dátiles','1 unidad (10g)',5,0.2,'AR'],
+        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR'],
+        ['Uvas','12 unidades (75g)',15,0.5,'AR'],
+        ['Pan blanco lactal','1 rebanada (25g)',15,2.0,'AR'],
+        ['Pan árabe blanco','1 unidad (60g)',30,6.0,'AR'],
         ['Arroz blanco cocido','½ taza (100g)',25,2,'AR'],
-        ['Miel','1 cda sopera (20g)',16,0,'AR'],
-        ['Mermelada común','1 cda sopera (20g)',14,0,'AR'],
-        ['Dulce de leche','2 cdas postre (30g)',20,2,'AR'],
-        ['Yogur descremado','1 pote (200g)',20,8,'MR'],
-        ['Leche chocolatada','1 vaso (200ml)',20,6,'MR'],
-        ['Bebida isotónica con HC','500ml (Gatorade/Powerade)',30,0,'AR'],
+        ['Miel','1 cda sopera (20g)',15,0,'AR'],
+        ['Mermelada común','1 cda sopera (20g)',15,0,'AR'],
+        ['Dulce de leche','1 cda postre (15g)',10,1.0,'AR'],
+        ['Yogur descremado','100g',10,4.0,'MR','EDIT:100:g:10:4.0'],
+        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0'],
+        ['Bebida isotónica con HC','500ml (Gatorade/Powerade)',30,0,'AR','EDIT:500:ml:30:0'],
+    ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
+    ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
         ['Tostadas de arroz inflado','3 unidades (30g)',25,2,'AR'],
         ['Dulce de membrillo','1 porción (40g)',25,0,'AR'],
         ['Dulce de batata','1 porción (40g)',25,0,'AR'],
       ]},
       {name:'Intra (>75 min)',sub:'Alto IG, máxima absorción, mínima carga digestiva. Solo en sesiones largas.',foods:[
-        ['Gel deportivo SIS','1 unidad (60ml)',20,0,'AR'],
-        ['Bebida isotónica con HC','500ml (Gatorade/Powerade)',30,0,'AR'],
+        ['Gel deportivo SIS','1 unidad',25,0,'AR'],
+        ['Bebida isotónica con HC','500ml (Gatorade/Powerade)',30,0,'AR','EDIT:500:ml:30:0'],
         ['Gomitas de azúcar','1 paquete chico (30g)',25,0,'AR'],
         ['Caramelos de goma','6-8 unidades (30g)',25,0,'AR'],
-        ['Banana madura','1 unidad (120g)',25,1,'AR'],
-        ['Dátiles','3 unidades (30g)',20,1,'AR'],
-        ['Pasas de uva','2 cdas soperas (30g)',20,1,'AR'],
+        ['Banana','1 unidad (100g)',20,1.0,'AR'],
+        ['Dátiles','1 unidad (10g)',5,0.2,'AR'],
+        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR'],
         ['Azúcar / dextrosa','2 cdas soperas (25g)',25,0,'AR'],
         ['Maltodextrina','2 cdas soperas (25g)',25,0,'AR'],
         ['Bebida casera (agua+azúcar+sal)','500ml + 30g azúcar + pizca sal',30,0,'AR'],
         ['Naranja pelada en gajos','1 unidad grande (200g)',20,1,'AR'],
       ]},
       {name:'Post-Entrenamiento',sub:'Alto IG — ventana anabólica. Siempre combiná con proteína.',foods:[
-        ['Banana madura','1 unidad grande (150g)',30,2,'AR'],
+        ['Banana','1 unidad (100g)',20,1.0,'AR'],
         ['Arroz blanco cocido','½ taza (100g)',25,2,'AR'],
-        ['Papa hervida','1 unidad grande (200g)',30,3,'AR'],
-        ['Puré de papa','1 taza (200g)',25,3,'AR'],
-        ['Pan blanco lactal','2 rebanadas (50g)',25,4,'AR'],
-        ['Leche chocolatada','1 vaso (200ml)',20,6,'MR'],
-        ['Yogur con cereales','1 pote + 2 cdas (220g)',30,8,'MR'],
-        ['Pasas de uva','2 cdas soperas (30g)',20,1,'AR'],
-        ['Dátiles','3 unidades (30g)',20,1,'AR'],
-        ['Uvas','1 taza (150g)',25,1,'AR'],
-        ['Bebida isotónica con HC','500ml',30,0,'AR'],
-        ['Dulce de leche','2 cdas postre (30g)',20,2,'AR'],
+        ['Papa','½ unidad grande (100g)',20,2.0,'AR'],
+        ['Papa (puré)','½ unidad grande (100g)',20,2.0,'AR'],
+        ['Pan blanco lactal','1 rebanada (25g)',15,2.0,'AR'],
+        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0'],
+        ['Yogur con cereales','1 pote + 2 cdas (220g)',30,8.0,'MR','EDIT:220:g:30:8.0'],
+        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR'],
+        ['Dátiles','1 unidad (10g)',5,0.2,'AR'],
+        ['Uvas','12 unidades (75g)',15,0.5,'AR'],
+        ['Bebida isotónica con HC','500ml',30,0,'AR','EDIT:500:ml:30:0'],
+        ['Dulce de leche','1 cda postre (15g)',10,1.0,'AR'],
         ['Dulce de membrillo / batata','1 porción (40g)',25,0,'AR'],
       ]},
       {name:'Almuerzo / Cena',sub:'Complejos y mixtos lentos. Comidas alejadas del esfuerzo.',foods:[
@@ -582,26 +813,29 @@ const DAYS=[
         ['Arroz blanco cocido','½ taza (100g)',25,2,'AR'],
         ['Pasta integral cocida','1 taza (150g)',30,6,'ML'],
         ['Pasta refinada cocida','1 taza (150g)',30,5,'AR'],
-        ['Papa hervida','1 unidad grande (200g)',30,3,'AR'],
-        ['Batata / Boniato','1 unidad (200g)',30,3,'AL'],
-        ['Choclo en grano','1 taza (150g)',25,4,'AL'],
+        ['Papa','½ unidad grande (100g)',20,2.0,'AR'],
+        ['Batata / Boniato','½ unidad grande (100g)',20,2.0,'AL'],
+    ['Plátano','1 unidad mediana (100g)',20,2.0,'AR'],
+        ['Choclo','100g (½ mazorca aprox.)',20,2.0,'AL'],
         ['Legumbres (porotos/garbanzos)','1 taza cocida (200g)',25,12,'ML'],
         ['Lentejas cocidas','1 taza (200g)',25,14,'ML'],
         ['Quínoa cocida','¾ taza (150g)',30,6,'ML'],
-        ['Pan integral','2 rebanadas (60g)',25,5,'ML'],
-        ['Mandioca','1 taza rallada (150g)',30,2,'AL'],
+        ['Pan integral','1 rebanada (25g)',10,2.5,'ML'],
+        ['Mandioca','1 taza rallada (150g)',30,2.0,'AL'],
       ]},
       {name:'Colaciones',sub:'Opciones prácticas para entre comidas en días de entrenamiento.',foods:[
-        ['Banana mediana','1 unidad (120g)',25,1,'AR'],
+        ['Banana','1 unidad (100g)',20,1.0,'AR'],
         ['Manzana','1 unidad (150g)',20,0,'AL'],
-        ['Dátiles','3 unidades (30g)',20,1,'AR'],
-        ['Pasas de uva','2 cdas soperas (30g)',20,1,'AR'],
-        ['Yogur descremado','1 pote (200g)',20,8,'MR'],
+        ['Dátiles','1 unidad (10g)',5,0.2,'AR'],
+        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR'],
+        ['Yogur descremado','100g',10,4.0,'MR','EDIT:100:g:10:4.0'],
         ['Yogur firme descremado','1 pote (100g)',10,10,'MR'],
-        ['Leche chocolatada','1 vaso (200ml)',20,6,'MR'],
+    ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
+    ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
+        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0'],
         ['Tostadas de arroz + dulce de leche','3 tostadas + 1 cda (40g total)',25,2,'AR'],
         ['Pan integral + mermelada','1 rebanada + 1 cda',15,2,'ML'],
-        ['Granola sin azúcar','½ taza (30g)',20,3,'AL'],
+        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL'],
         ['Galletitas integrales','5 unidades (30g)',20,3,'AL'],
       ]},
     ]
@@ -613,49 +847,59 @@ const DAYS=[
     groups:[
       {name:'Desayuno / Merienda',sub:'Complejos y mixtos lentos. Sin urgencia de timing.',foods:[
         ['Avena','4 cdas soperas (40g)',25,4,'ML'],
-        ['Pan integral','2 rebanadas (60g)',25,5,'ML'],
-        ['Granola sin azúcar','½ taza (30g)',20,3,'AL'],
+        ['Pan integral','1 rebanada (25g)',10,2.5,'ML'],
+        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL'],
         ['Galletitas integrales','5 unidades (30g)',20,3,'AL'],
-        ['Yogur descremado','1 pote (200g)',20,8,'MR'],
+        ['Yogur descremado','100g',10,4.0,'MR','EDIT:100:g:10:4.0'],
         ['Yogur firme descremado','1 pote (100g)',10,10,'MR'],
-        ['Leche descremada','1 vaso (200ml)',10,6,'MR'],
-        ['Manzana / Pera','1 unidad (150g)',20,0,'AL'],
-        ['Naranja','1 unidad grande (200g)',20,1,'AL'],
-        ['Kiwi','2 unidades (150g)',20,1,'AL'],
-        ['Frutillas','1 taza (200g)',15,1,'AL'],
-        ['Durazno / Damasco','2 unidades (150g)',15,1,'AL'],
+    ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
+    ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
+        ['Leche descremada','1 vaso (200ml)',10,6.0,'MR','EDIT:200:ml:10:6.0'],
+        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL'],
+        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL'],
+        ['Kiwi','1 unidad (75g)',10,0.5,'AL'],
+        ['Frutillas','7 unidades (100g)',10,0.5,'AL'],
+        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL'],
       ]},
       {name:'Almuerzo / Cena',sub:'Absorción lenta, fibrosos, bajo índice glucémico.',foods:[
         ['Avena','4 cdas soperas (40g)',25,4,'ML'],
         ['Arroz integral cocido','½ taza (100g)',25,3,'AL'],
         ['Pasta integral cocida','1 taza (150g)',30,6,'ML'],
-        ['Batata / Boniato','1 unidad (200g)',30,3,'AL'],
-        ['Choclo en grano','1 taza (150g)',25,4,'AL'],
+        ['Batata / Boniato','½ unidad grande (100g)',20,2.0,'AL'],
+    ['Plátano','1 unidad mediana (100g)',20,2.0,'AR'],
+        ['Choclo','100g (½ mazorca aprox.)',20,2.0,'AL'],
         ['Legumbres cocidas','1 taza (200g)',25,12,'ML'],
         ['Lentejas cocidas','1 taza (200g)',25,14,'ML'],
         ['Quínoa cocida','¾ taza (150g)',30,6,'ML'],
-        ['Pan integral','2 rebanadas (60g)',25,5,'ML'],
-        ['Mandioca','1 taza rallada (150g)',30,2,'AL'],
+        ['Pan integral','1 rebanada (25g)',10,2.5,'ML'],
+        ['Mandioca','1 taza rallada (150g)',30,2.0,'AL'],
       ]},
       {name:'Colaciones',sub:'Opciones de bajo índice glucémico para entre comidas.',foods:[
-        ['Manzana / Pera','1 unidad (150g)',20,0,'AL'],
-        ['Naranja','1 unidad grande (200g)',20,1,'AL'],
-        ['Kiwi','2 unidades (150g)',20,1,'AL'],
-        ['Frutillas / berries','1 taza (200g)',15,1,'AL'],
-        ['Yogur descremado','1 pote (200g)',20,8,'MR'],
+        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL'],
+        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL'],
+        ['Kiwi','1 unidad (75g)',10,0.5,'AL'],
+        ['Frutillas / berries','7 unidades (100g)',10,0.5,'AL'],
+        ['Yogur descremado','100g',10,4.0,'MR','EDIT:100:g:10:4.0'],
         ['Yogur firme descremado','1 pote (100g)',10,10,'MR'],
+    ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
+    ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
         ['Galletitas integrales','5 unidades (30g)',20,3,'AL'],
-        ['Pan integral + palta','1 rebanada + ¼ palta',15,3,'ML'],
-        ['Granola sin azúcar','½ taza (30g)',20,3,'AL'],
+        ['Pan integral + ½ palta','1 rebanada + ½ palta',15,3,'AL'],
+        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL'],
       ]},
     ]
   }
 ];
 
 let counts={};
+let customHC={};        // overridden HC values for editable items
+let customProt={};      // overridden prot values for editable items
+let customQty={};       // custom quantities for editable items
+let customQtyDisplay={}; // display text for edited quantities
 let activeSubs={entreno:0,descanso:0};
 let dayOpen={entreno:false,descanso:false};
 let currentTooltip=null;
+let currentEditPopup=null;
 
 function makeDots(t){
   const map={AR:'<span class="dot-r"></span>',AL:'<span class="dot-g"></span>',MR:'<span class="dot-r"></span><span class="dot-b"></span>',ML:'<span class="dot-g"></span><span class="dot-b"></span>'};
@@ -704,16 +948,84 @@ function buildUI(){
       g.foods.forEach((f,fi)=>{
         const key=`${day.id}-${gi}-${fi}`;
         const cnt=counts[key]||0;
+        const isEdit=f[5]&&typeof f[5]==='string'&&f[5].startsWith('EDIT:');
+        const ep=isEdit?f[5].split(':'):null;
+        const curHC=customHC[key]!==undefined?customHC[key]:f[2];
+        const curProt=customProt[key]!==undefined?customProt[key]:f[3];
+        const displayQty = customQtyDisplay[key] || f[1];
+        const qtyCell=isEdit
+          ?`<span class="qty-text">${displayQty} <button class="edit-qty-btn" onclick="event.stopPropagation();openEditQty(this,'${key}',${ep[1]},'${ep[2]}',${ep[3]},${ep[4]})" title="Editar cantidad">✏️</button></span>`
+          :`<span class="qty-text">${f[1]}</span>`;
         rows+=`<tr id="row-${key}" class="${cnt>0?'selected':''}" onclick="addFood('${key}','${day.id}',${gi},${fi})">
-          <td>${f[0]}${cnt>0?`<span class="count-badge">${cnt}</span>`:''}</td>
-          <td class="qty-text">${f[1]}</td>
-          <td class="c"><span class="pts-num">${f[2]}</span></td>
-          <td class="c">${f[3]>0?`<span class="prot-num">${f[3]}g</span>`:`<span class="prot-zero">—</span>`}</td>
+          <td>${wrapFruitName(f[0])}${cnt>0?`<span class="count-badge">${cnt}</span>`:''}</td>
+          <td>${qtyCell}</td>
+          <td class="c"><span class="pts-num" id="pts-${key}">${curHC}</span></td>
+          <td class="c">${f[3]>0?`<span class="prot-num" id="prot-${key}">${String(curProt).replace('.',',')}g</span>`:`<span class="prot-zero">—</span>`}</td>
           <td class="c"><button class="tipo-btn tipo-${f[4]}" onclick="event.stopPropagation();openTooltip(event,'${f[4]}')">${makeDots(f[4])} ${f[4]}</button></td>
         </tr>`;
       });
 
-      panel.innerHTML=`<p class="group-title">${g.name}</p><p class="group-sub">${g.sub}</p><div style="overflow-x:auto"><table class="food-table"><thead><tr><th>Alimento</th><th>Cantidad</th><th class="c">Puntos</th><th class="c">Proteína</th><th class="c">Tipo</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      // Build complement section if exists
+      const compKey = day.id + '-' + gi;
+      const comp = COMPLEMENTS[compKey];
+      let compHTML = '';
+      if(comp) {
+        let compRows = comp.items.map((f,ci) => {
+          const ckey = 'comp-' + compKey + '-' + ci;
+          const cnt = counts[ckey] || 0;
+          const isEditC = f[5] && typeof f[5]==='string' && f[5].startsWith('EDIT:');
+          const epC = isEditC ? f[5].split(':') : null;
+          const warnText = isEditC ? '' : getWarnText(f[5]);
+          const hasNote = warnText !== '';
+          const dispQtyC = customQtyDisplay[ckey] || f[1];
+          const curHCC = customHC[ckey]!==undefined ? customHC[ckey] : f[4];
+          const curProtC = customProt[ckey]!==undefined ? customProt[ckey] : f[2];
+          const qtyCellC = isEditC
+            ? `<span class="qty-text">${dispQtyC} <button class="edit-qty-btn" onclick="event.stopPropagation();openEditQtyComp(this,'${ckey}','${compKey}',${ci},${epC[1]},'${epC[2]}',${epC[3]},${epC[4]})" title="Editar cantidad">✏️</button></span>`
+            : `<span class="qty-text">${f[1]}</span>`;
+          return `<tr id="row-${ckey}" class="${cnt>0?'selected':''}" onclick="addComp('${ckey}','${compKey}',${ci})">
+            <td>${f[0]}${hasNote?`<span class="comp-note">${warnText}</span>`:''}${cnt>0?`<span class="count-badge">${cnt}</span>`:''}</td>
+            <td>${qtyCellC}</td>
+            <td class="c" id="prot-${ckey}" style="color:var(--green-600);font-weight:600">${curProtC>0?(String(curProtC).replace('.',','))+'g':'—'}</td>
+            <td class="c"><span class="pts-num" style="font-size:13px" id="pts-${ckey}">${curHCC>0?curHCC:'—'}</span></td>
+            <td class="c" style="color:#8896A8;font-size:12px">${(()=>{
+              if(!f[3]||f[3]<=0) return '—';
+              const fatKey=f[5]&&typeof f[5]==='string'?f[5]:'';
+              const hasFat=fatKey.includes('FATS:');
+              const gVal=String(f[3]).replace('.',',');
+              if(hasFat){
+                const fatInfo=fatKey.split('FATS:')[1].replace(/'/g,"\'").replace(/"/g,'&quot;');
+                return `<button onclick="event.stopPropagation();showFatInfo(this,'${fatInfo}')" style="background:none;border:none;cursor:pointer;color:#A855C8;font-weight:600;font-size:12px;padding:0;text-decoration:none;">${gVal}g 🤔</button>`;
+              }
+              return `<span style="color:#A855C8">${gVal}g</span>`;
+            })()}</td>
+          </tr>`;
+        }).join('');
+        compHTML = `<div class="comp-section">
+          <div class="comp-header">
+            <span class="comp-icon">🥚</span>
+            <span class="comp-title">${comp.title}</span>
+          </div>
+          <p class="comp-note-text">${comp.note}</p>
+          <div style="overflow-x:auto">
+            <table class="food-table">
+              <thead><tr>
+                <th>Alimento</th><th>Cantidad</th>
+                <th class="c" style="color:#1D9E75">Proteína</th>
+                <th class="c" style="color:#185FA5">Puntos HC</th>
+                <th class="c" style="color:#8896A8">Grasas</th>
+              </tr></thead>
+              <tbody>${compRows}</tbody>
+            </table>
+          </div>
+        </div>`;
+      } else if(compKey === 'entreno-2') {
+        compHTML = `<div class="comp-section comp-empty">
+          <span class="comp-icon">⚡</span>
+          <span style="font-size:13px;color:#8896A8;font-style:italic;">Durante el esfuerzo no se consumen complementos. Solo HC de fácil digestión.</span>
+        </div>`;
+      }
+      panel.innerHTML=`<p class="group-title">${g.name}</p><p class="group-sub">${g.sub}</p><div style="overflow-x:auto"><table class="food-table"><thead><tr><th>Alimento</th><th>Cantidad</th><th class="c">Puntos</th><th class="c">Proteína</th><th class="c">Tipo</th></tr></thead><tbody>${rows}</tbody></table></div>${compHTML}`;
       panelsCont.appendChild(panel);
     });
 
@@ -762,7 +1074,118 @@ function addFood(key,dayId,gi,fi){
     const nameCell=row.cells[0];
     const badge=nameCell.querySelector('.count-badge');
     if(badge)badge.textContent=cnt;
-    else nameCell.innerHTML=f[0]+`<span class="count-badge">${cnt}</span>`;
+    else nameCell.innerHTML=wrapFruitName(f[0])+`<span class="count-badge">${cnt}</span>`;
+  }
+}
+
+function openEditQty(btn, key, baseQty, unit, hcPerBase, protPerBase){
+  closeEditPopup();
+  const rect=btn.getBoundingClientRect();
+  const pop=document.createElement('div');
+  pop.id='edit-qty-popup';
+  pop.style.cssText=`position:fixed;z-index:9999;background:white;border:1.5px solid #B5D4F4;border-radius:14px;box-shadow:0 8px 30px rgba(4,44,83,0.18);padding:1rem 1.1rem;width:220px;left:${Math.min(rect.left,window.innerWidth-230)}px;top:${rect.bottom+6}px;animation:tipIn 0.22s cubic-bezier(0.34,1.56,0.64,1);`;
+  const currentQty = customQty[key] || baseQty;
+  const origQtyDisplay = btn.closest('td').querySelector('.qty-text').textContent.trim().replace('✏️','').trim();
+  pop.innerHTML=`
+    <p style="font-size:13px;font-weight:600;color:#0C447C;margin-bottom:4px;">Editar cantidad</p>
+    <p style="font-size:11px;color:#8896A8;margin-bottom:8px;">Base: ${baseQty} ${unit}</p>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <input id="edit-qty-input" type="number" min="1" max="5000" value="${currentQty}"
+        style="flex:1;border:1.5px solid #B5D4F4;border-radius:8px;padding:7px 10px;font-size:18px;text-align:center;font-family:DM Sans,sans-serif;color:#042C53;outline:none;"
+        oninput="previewEdit('${key}',this.value,${baseQty},'${unit}',${hcPerBase},${protPerBase})"
+        onkeydown="if(event.key==='Enter')applyEdit('${key}',${baseQty},'${unit}',${hcPerBase},${protPerBase})"
+      >
+      <span style="font-size:13px;font-weight:500;color:#185FA5;">${unit}</span>
+    </div>
+    <div id="edit-preview" style="font-size:12px;color:#378ADD;margin-bottom:10px;min-height:18px;font-weight:500;"></div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="applyEdit('${key}',${baseQty},'${unit}',${hcPerBase},${protPerBase})"
+        style="flex:1;background:#185FA5;color:white;border:none;border-radius:8px;padding:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">
+        Aplicar ✓
+      </button>
+      <button onclick="resetEdit('${key}',${baseQty},'${unit}',${hcPerBase},${protPerBase},'${origQtyDisplay}')"
+        style="background:transparent;border:1.5px solid #D3D8E0;border-radius:8px;padding:8px 10px;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;color:#8896A8;">
+        Reset
+      </button>
+    </div>`;
+  document.body.appendChild(pop);
+  currentEditPopup=pop;
+  const input=pop.querySelector('#edit-qty-input');
+  input.focus();input.select();
+  previewEdit(key,currentQty,baseQty,unit,hcPerBase,protPerBase);
+}
+
+function previewEdit(key,qty,baseQty,unit,hcPerBase,protPerBase){
+  qty=parseFloat(qty)||0;
+  const newHC=Math.round((qty/baseQty)*hcPerBase*10)/10;
+  const newProt=Math.round((qty/baseQty)*protPerBase*10)/10;
+  const prev=document.getElementById('edit-preview');
+  if(prev) prev.textContent=`→ ${newHC} puntos HC · ${String(newProt).replace('.',',')}g prot`;
+}
+
+function applyEdit(key,baseQty,unit,hcPerBase,protPerBase){
+  const input=document.getElementById('edit-qty-input');
+  const qty=parseFloat(input.value)||baseQty;
+  customQty[key]=qty;
+  customHC[key]=Math.round((qty/baseQty)*hcPerBase*10)/10;
+  customProt[key]=Math.round((qty/baseQty)*protPerBase*10)/10;
+  // Store display text
+  customQtyDisplay[key]=qty+' '+unit;
+  // Update pts and prot cells
+  const ptsEl=document.getElementById('pts-'+key);
+  const protEl=document.getElementById('prot-'+key);
+  if(ptsEl) ptsEl.textContent=customHC[key];
+  if(protEl) protEl.textContent=String(customProt[key]).replace('.',',')+' g';
+  // Update qty display text in row
+  const row=document.getElementById('row-'+key);
+  if(row){
+    const qtySpan=row.querySelector('.qty-text');
+    if(qtySpan){
+      const editBtn=qtySpan.querySelector('.edit-qty-btn');
+      qtySpan.textContent=qty+' '+unit+' ';
+      if(editBtn) qtySpan.appendChild(editBtn);
+    }
+    // Auto-add to counts if not already selected
+    if(!counts[key]){
+      counts[key]=1;
+      row.className='selected';
+      const nameCell=row.cells[0];
+      const badge=nameCell.querySelector('.count-badge');
+      if(!badge) nameCell.innerHTML=nameCell.textContent+`<span class="count-badge">1</span>`;
+    }
+    row.style.background='#DBEAFE';
+    setTimeout(()=>row.style.background='',600);
+  }
+  updateAll();
+  closeEditPopup();
+}
+
+function resetEdit(key,baseQty,unit,hcPerBase,protPerBase,origDisplay){
+  delete customHC[key]; delete customProt[key]; delete customQty[key]; delete customQtyDisplay[key];
+  const ptsEl=document.getElementById('pts-'+key);
+  const protEl=document.getElementById('prot-'+key);
+  if(ptsEl) ptsEl.textContent=hcPerBase;
+  if(protEl && protPerBase>0) protEl.textContent=String(protPerBase).replace('.',',')+' g';
+  // Restore original qty display
+  const row=document.getElementById('row-'+key);
+  if(row){
+    const qtySpan=row.querySelector('.qty-text');
+    if(qtySpan){
+      const editBtn=qtySpan.querySelector('.edit-qty-btn');
+      qtySpan.textContent=origDisplay+' ';
+      if(editBtn) qtySpan.appendChild(editBtn);
+    }
+  }
+  updateAll();
+  closeEditPopup();
+}
+
+function closeEditPopup(){
+  if(currentEditPopup){
+    currentEditPopup.style.opacity='0';
+    currentEditPopup.style.transform='scale(0.9)';
+    currentEditPopup.style.transition='opacity 0.15s,transform 0.15s';
+    setTimeout(()=>{if(currentEditPopup)currentEditPopup.remove();currentEditPopup=null;},160);
   }
 }
 
@@ -771,6 +1194,21 @@ function updateAll(){
   const tags=[];
   Object.entries(counts).forEach(([key,cnt])=>{
     if(cnt<=0)return;
+    // Handle complement keys
+    if(key.startsWith('comp-')){
+      const rest=key.replace('comp-','');
+      const lastDash=rest.lastIndexOf('-');
+      const compKey=rest.substring(0,lastDash);
+      const ci=parseInt(rest.substring(lastDash+1));
+      const comp=COMPLEMENTS[compKey];
+      if(!comp)return;
+      const f=comp.items[ci];
+      totalProt+=f[2]*cnt;
+      totalHC+=f[4]*cnt; // HC from complement (index 4)
+      totalCount+=cnt;
+      for(let i=0;i<cnt;i++) tags.push({key,name:f[0],hc:f[4],prot:f[2],isComp:true});
+      return;
+    }
     const parts=key.split('-');
     const dayId=parts[0];
     const gi=parseInt(parts[1]);
@@ -778,10 +1216,12 @@ function updateAll(){
     const day=DAYS.find(d=>d.id===dayId);
     if(!day)return;
     const f=day.groups[gi].foods[fi];
-    totalHC+=f[2]*cnt;
-    totalProt+=f[3]*cnt;
+    const hcVal = customHC[key]!==undefined ? customHC[key] : f[2];
+    const protVal = customProt[key]!==undefined ? customProt[key] : f[3];
+    totalHC+=hcVal*cnt;
+    totalProt+=protVal*cnt;
     totalCount+=cnt;
-    for(let i=0;i<cnt;i++) tags.push({key,name:f[0],hc:f[2],prot:f[3]});
+    for(let i=0;i<cnt;i++) tags.push({key,name:f[0],hc:hcVal,prot:protVal});
   });
 
   const hcEl=document.getElementById('total-hc');
@@ -799,7 +1239,7 @@ function updateAll(){
     if(wrap) wrap.classList.remove('has-items');
   } else {
     box.innerHTML=tags.map(t=>`<span class="sel-tag" onclick="removeOneTag('${t.key}')">
-      ${t.name}<span class="pts">(${t.hc}pts${t.prot>0?', '+t.prot+'g prot':''})</span><span class="rm">×</span></span>`).join('');
+      ${t.name}<span class="pts">(${t.hc>0?t.hc+'pts':'0pts'}${t.prot>0?', '+String(t.prot).replace('.',',')+' g prot':''})</span><span class="rm">×</span></span>`).join('');
     if(wrap) wrap.classList.add('has-items');
   }
 }
@@ -809,25 +1249,274 @@ function removeOneTag(key){
   counts[key]--;
   if(counts[key]<=0) delete counts[key];
   updateAll();
+  const row=document.getElementById('row-'+key);
+  if(!row)return;
+  const cnt=counts[key]||0;
+  // Comp key: 'comp-entreno-0-2'
+  if(key.startsWith('comp-')){
+    const rest = key.replace('comp-','');
+    const lastDash = rest.lastIndexOf('-');
+    const compKey = rest.substring(0, lastDash);
+    const ci = parseInt(rest.substring(lastDash+1));
+    const comp = COMPLEMENTS[compKey];
+    if(!comp)return;
+    const f = comp.items[ci];
+    row.className = cnt>0?'selected':'';
+    const nameCell=row.cells[0];
+    const noteSpan=nameCell.querySelector('.comp-note');
+    const noteTxt=noteSpan?noteSpan.outerHTML:'';
+    if(cnt>0){const b=nameCell.querySelector('.count-badge');if(b)b.textContent=cnt;else nameCell.innerHTML=f[0]+noteTxt+`<span class="count-badge">${cnt}</span>`;}
+    else nameCell.innerHTML=f[0]+makeNoteHTML(f[5]);
+    return;
+  }
   const parts=key.split('-');
   const dayId=parts[0];const gi=parseInt(parts[1]);const fi=parseInt(parts[2]);
   const day=DAYS.find(d=>d.id===dayId);
   if(!day)return;
   const f=day.groups[gi].foods[fi];
-  const row=document.getElementById('row-'+key);
-  if(!row)return;
-  const cnt=counts[key]||0;
   row.className=cnt>0?'selected':'';
   const nameCell=row.cells[0];
-  if(cnt>0){ const b=nameCell.querySelector('.count-badge'); if(b)b.textContent=cnt; else nameCell.innerHTML=f[0]+`<span class="count-badge">${cnt}</span>`; }
+  if(cnt>0){const b=nameCell.querySelector('.count-badge');if(b)b.textContent=cnt;else nameCell.innerHTML=f[0]+`<span class="count-badge">${cnt}</span>`;}
   else nameCell.textContent=f[0];
 }
 
 function resetAll(){
   counts={};
+  customHC={};
+  customProt={};
+  customQty={};
+  customQtyDisplay={};
   updateAll();
   buildUI();
 }
+
+function openEditQtyComp(btn, ckey, compKey, ci, baseQty, unit, hcPerBase, protPerBase){
+  closeEditPopup();
+  const rect=btn.getBoundingClientRect();
+  const pop=document.createElement('div');
+  pop.id='edit-qty-popup';
+  pop.style.cssText=`position:fixed;z-index:9999;background:white;border:1.5px solid #B5D4F4;border-radius:14px;box-shadow:0 8px 30px rgba(4,44,83,0.18);padding:1rem 1.1rem;width:220px;left:${Math.min(rect.left,window.innerWidth-230)}px;top:${rect.bottom+6}px;animation:tipIn 0.22s cubic-bezier(0.34,1.56,0.64,1);`;
+  const currentQty = customQty[ckey] || baseQty;
+  const origDisplay = btn.closest('td').querySelector('.qty-text').textContent.trim().replace('✏️','').trim();
+  pop.innerHTML=`
+    <p style="font-size:13px;font-weight:600;color:#0C447C;margin-bottom:4px;">Editar cantidad</p>
+    <p style="font-size:11px;color:#8896A8;margin-bottom:8px;">Base: ${baseQty} ${unit}</p>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <input id="edit-qty-input" type="number" min="1" max="5000" value="${currentQty}"
+        style="flex:1;border:1.5px solid #B5D4F4;border-radius:8px;padding:7px 10px;font-size:18px;text-align:center;font-family:DM Sans,sans-serif;color:#042C53;outline:none;"
+        oninput="previewEditComp('${ckey}',this.value,${baseQty},'${unit}',${hcPerBase},${protPerBase})"
+        onkeydown="if(event.key==='Enter')applyEditComp('${ckey}','${compKey}',${ci},${baseQty},'${unit}',${hcPerBase},${protPerBase},'${origDisplay}')"
+      >
+      <span style="font-size:13px;font-weight:500;color:#185FA5;">${unit}</span>
+    </div>
+    <div id="edit-preview" style="font-size:12px;color:#378ADD;margin-bottom:10px;min-height:18px;font-weight:500;"></div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="applyEditComp('${ckey}','${compKey}',${ci},${baseQty},'${unit}',${hcPerBase},${protPerBase},'${origDisplay}')"
+        style="flex:1;background:#185FA5;color:white;border:none;border-radius:8px;padding:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">
+        Aplicar ✓
+      </button>
+      <button onclick="resetEditComp('${ckey}',${baseQty},'${unit}',${hcPerBase},${protPerBase},'${origDisplay}')"
+        style="background:transparent;border:1.5px solid #D3D8E0;border-radius:8px;padding:8px 10px;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;color:#8896A8;">
+        Reset
+      </button>
+    </div>`;
+  document.body.appendChild(pop);
+  currentEditPopup=pop;
+  const input=pop.querySelector('#edit-qty-input');
+  input.focus(); input.select();
+  previewEditComp(ckey,currentQty,baseQty,unit,hcPerBase,protPerBase);
+}
+
+function previewEditComp(ckey,qty,baseQty,unit,hcPerBase,protPerBase){
+  qty=parseFloat(qty)||0;
+  const newHC=Math.round((qty/baseQty)*hcPerBase*10)/10;
+  const newProt=Math.round((qty/baseQty)*protPerBase*10)/10;
+  const prev=document.getElementById('edit-preview');
+  if(prev) prev.textContent=`→ ${newHC} puntos HC · ${String(newProt).replace('.',',')}g prot`;
+}
+
+function applyEditComp(ckey,compKey,ci,baseQty,unit,hcPerBase,protPerBase,origDisplay){
+  const input=document.getElementById('edit-qty-input');
+  const qty=parseFloat(input.value)||baseQty;
+  customQty[ckey]=qty;
+  customHC[ckey]=Math.round((qty/baseQty)*hcPerBase*10)/10;
+  customProt[ckey]=Math.round((qty/baseQty)*protPerBase*10)/10;
+  customQtyDisplay[ckey]=qty+' '+unit;
+  const ptsEl=document.getElementById('pts-'+ckey);
+  const protEl=document.getElementById('prot-'+ckey);
+  if(ptsEl) ptsEl.textContent=customHC[ckey]||'—';
+  if(protEl){ protEl.textContent=customProt[ckey]>0?String(customProt[ckey]).replace('.',',')+' g':'—'; protEl.style.color='var(--green-600)'; protEl.style.fontWeight='600'; }
+  const row=document.getElementById('row-'+ckey);
+  if(row){
+    const qtySpan=row.querySelector('.qty-text');
+    if(qtySpan){const editBtn=qtySpan.querySelector('.edit-qty-btn');qtySpan.textContent=qty+' '+unit+' ';if(editBtn)qtySpan.appendChild(editBtn);}
+    if(!counts[ckey]){
+      counts[ckey]=1;
+      row.className='selected';
+      const nameCell=row.cells[0];
+      if(!nameCell.querySelector('.count-badge'))nameCell.innerHTML=nameCell.textContent+`<span class="count-badge">1</span>`;
+    }
+    row.style.background='#DBEAFE';
+    setTimeout(()=>row.style.background='',600);
+  }
+  updateAll();
+  closeEditPopup();
+}
+
+function resetEditComp(ckey,baseQty,unit,hcPerBase,protPerBase,origDisplay){
+  delete customHC[ckey]; delete customProt[ckey]; delete customQty[ckey]; delete customQtyDisplay[ckey];
+  const ptsEl=document.getElementById('pts-'+ckey);
+  const protEl=document.getElementById('prot-'+ckey);
+  if(ptsEl) ptsEl.textContent=hcPerBase||'—';
+  if(protEl) protEl.textContent=protPerBase>0?String(protPerBase).replace('.',',')+' g':'—';
+  const row=document.getElementById('row-'+ckey);
+  if(row){const qtySpan=row.querySelector('.qty-text');if(qtySpan){const editBtn=qtySpan.querySelector('.edit-qty-btn');qtySpan.textContent=origDisplay+' ';if(editBtn)qtySpan.appendChild(editBtn);}}
+  updateAll();
+  closeEditPopup();
+}
+
+function showFatInfo(btn, fatText){
+  // Toggle: if already open from same button, close
+  if(currentFatPopup){
+    const wasBtn = currentFatPopup._triggerBtn;
+    currentFatPopup.remove();
+    currentFatPopup = null;
+    if(wasBtn === btn) return;
+  }
+  const rect = btn.getBoundingClientRect();
+  const pop = document.createElement('div');
+  const left = Math.min(rect.left, window.innerWidth-260);
+  const top = rect.bottom+8 > window.innerHeight-130 ? rect.top-138 : rect.bottom+8;
+  pop.style.cssText = `position:fixed;z-index:9999;background:white;border:1.5px solid #9FE1CB;border-radius:14px;box-shadow:0 8px 30px rgba(4,44,83,0.18);padding:1rem 1.1rem;width:250px;left:${left}px;top:${top}px;animation:tipIn 0.22s cubic-bezier(0.34,1.56,0.64,1);`;
+  pop.innerHTML = `
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+      <span style="font-size:16px;">🤔</span>
+      <p style="font-size:13px;font-weight:600;color:#085041;margin:0;">Calidad de grasas</p>
+      <button onclick="if(currentFatPopup){currentFatPopup.remove();currentFatPopup=null;}" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#8896A8;font-size:16px;line-height:1;">×</button>
+    </div>
+    <p style="font-size:12px;color:#2C3A4A;line-height:1.6;margin:0;">${fatText}</p>`;
+  pop._triggerBtn = btn;
+  document.body.appendChild(pop);
+  currentFatPopup = pop;
+}
+
+let currentFatPopup = null;
+
+function showFatPopup(btn, text) {
+  if(currentFatPopup) {
+    const wasBtn = currentFatPopup._triggerBtn;
+    currentFatPopup.remove();
+    currentFatPopup = null;
+    if(wasBtn === btn) return;
+  }
+  const rect = btn.getBoundingClientRect();
+  const pop = document.createElement('div');
+  pop.className = 'fat-popup';
+  let left = rect.left;
+  let top = rect.bottom + 6;
+  if(left + 250 > window.innerWidth) left = window.innerWidth - 255;
+  if(top + 130 > window.innerHeight) top = rect.top - 140;
+  pop.style.left = left + 'px';
+  pop.style.top = top + 'px';
+  pop.innerHTML = `<button class="fat-popup-close" onclick="closeFatPopup()">×</button>
+    <p class="fat-popup-title">🤔 Calidad de las grasas</p>
+    <p class="fat-popup-body">${text}</p>`;
+  pop.addEventListener('click', e => e.stopPropagation());
+  pop._triggerBtn = btn;
+  document.body.appendChild(pop);
+  currentFatPopup = pop;
+}
+
+function closeFatPopup() {
+  if(currentFatPopup) { currentFatPopup.remove(); currentFatPopup = null; }
+}
+
+function getWarnText(nota) {
+  if(!nota || nota === '') return '';
+  if(nota.startsWith('EDIT:')) return '';
+  if(nota.startsWith('FATS:')) return ''; // pure FATS, no warning
+  // Has FATS: somewhere — extract only the part before it
+  if(nota.includes('FATS:')) {
+    const before = nota.split('FATS:')[0].replace(/[|]/g,'').trim();
+    return before || '';
+  }
+  // Pure ⚠️ warning with no FATS
+  return nota;
+}
+function makeNoteHTML(nota) {
+  const w = getWarnText(nota);
+  return w ? `<span class="comp-note">${w}</span>` : '';
+}
+
+let currentFruitPopup = null;
+
+function showFruitPopup(btn, type) {
+  if(currentFruitPopup) {
+    const wasBtn = currentFruitPopup._triggerBtn;
+    currentFruitPopup.remove();
+    currentFruitPopup = null;
+    if(wasBtn === btn) return;
+  }
+  const data = {
+    banana: {
+      title: 'Frutas frescas con los mismos puntos (≈20 pts / 100g)',
+      text: 'En igual cantidad de gramos, estas frutas tienen aproximadamente los mismos hidratos de carbono:<br><br><strong>🍌 Banana &nbsp;·&nbsp; 🍇 Uva &nbsp;·&nbsp; 🍑 Higo &nbsp;·&nbsp; 🍎 Granada &nbsp;·&nbsp; 🍊 Kaki</strong>'
+    },
+    frutas_a: {
+      title: 'Frutas frescas con los mismos puntos (≈10-15 pts / 100-150g)',
+      text: 'En igual cantidad de gramos, estas frutas tienen aproximadamente los mismos hidratos de carbono:<br><br><strong>🍍 Ananá &nbsp;·&nbsp; 🥝 Kiwi &nbsp;·&nbsp; 🍑 Durazno &nbsp;·&nbsp; 🍑 Ciruela &nbsp;·&nbsp; 🍑 Damasco &nbsp;·&nbsp; 🍒 Cereza &nbsp;·&nbsp; 🫐 Frambuesa &nbsp;·&nbsp; 🍓 Frutilla &nbsp;·&nbsp; 🫐 Arándanos &nbsp;·&nbsp; 🍇 Moras &nbsp;·&nbsp; 🍎 Manzana &nbsp;·&nbsp; 🍐 Pera &nbsp;·&nbsp; 🍊 Mandarina &nbsp;·&nbsp; 🍊 Naranja &nbsp;·&nbsp; 🍊 Pomelo</strong>'
+    },
+    frutas_desecadas: {
+      title: 'Frutas desecadas con los mismos puntos',
+      text: 'En igual cantidad de gramos, estas frutas desecadas tienen aproximadamente los mismos hidratos de carbono:<br><br><strong>🟤 Ciruela pasa &nbsp;·&nbsp; 🍑 Orejón de durazno &nbsp;·&nbsp; 🍐 Orejón de pera &nbsp;·&nbsp; 🍇 Pasas de uva &nbsp;·&nbsp; 🍑 Higo seco &nbsp;·&nbsp; 🍎 Manzana desecada &nbsp;·&nbsp; 🌴 Dátiles &nbsp;·&nbsp; 🍑 Orejón de damasco</strong><br><br><span style="font-size:11px;color:#8896A8;">⚠️ Las frutas desecadas concentran mucho más azúcar por volumen que las frescas — tené en cuenta las porciones.</span>'
+    }
+  };
+  const d = data[type];
+  if(!d) return;
+  const rect = btn.getBoundingClientRect();
+  const pop = document.createElement('div');
+  pop.style.cssText = `position:fixed;z-index:9999;background:white;border:1.5px solid #B5D4F4;border-radius:14px;box-shadow:0 8px 30px rgba(4,44,83,0.2);padding:1rem 1.1rem;width:270px;animation:tipIn 0.22s cubic-bezier(0.34,1.56,0.64,1);`;
+  let left = rect.left;
+  let top = rect.bottom + 8;
+  if(left + 280 > window.innerWidth) left = window.innerWidth - 285;
+  if(top + 180 > window.innerHeight) top = rect.top - 190;
+  pop.style.left = left + 'px';
+  pop.style.top = top + 'px';
+  pop.innerHTML = `
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+      <p style="font-size:13px;font-weight:600;color:#0C447C;margin:0;flex:1;">${d.title}</p>
+      <button onclick="if(currentFruitPopup){currentFruitPopup.remove();currentFruitPopup=null;}" style="background:none;border:none;cursor:pointer;color:#8896A8;font-size:17px;line-height:1;flex-shrink:0;">×</button>
+    </div>
+    <p style="font-size:12px;color:#2C3A4A;line-height:1.7;margin:0;">${d.text}</p>`;
+  pop._triggerBtn = btn;
+  document.body.appendChild(pop);
+  currentFruitPopup = pop;
+}
+
+const FRUIT_CLICKABLE = {
+  'Banana': 'banana',
+  'Uvas': 'banana',
+  'Plátano': 'banana',
+  'Higo': 'banana',
+  'Manzana / Pera': 'frutas_a',
+  'Manzana': 'frutas_a',
+  'Kiwi': 'frutas_a',
+  'Frutillas': 'frutas_a',
+  'Frutillas / berries': 'frutas_a',
+  'Durazno / Damasco': 'frutas_a',
+  'Naranja': 'frutas_a',
+  'Naranja pelada en gajos': 'frutas_a',
+  'Dátiles': 'frutas_desecadas',
+  'Pasas de uva': 'frutas_desecadas',
+};
+
+function wrapFruitName(name) {
+  const type = FRUIT_CLICKABLE[name];
+  if(!type) return name;
+  return `<button onclick="event.stopPropagation();showFruitPopup(this,'${type}')" style="background:none;border:none;cursor:pointer;color:inherit;font:inherit;padding:0;text-align:left;text-decoration:none;">${name}</button>`;
+}
+
+buildUI();
 
 function openTooltip(e,tipo){
   e.stopPropagation();
@@ -868,6 +1557,13 @@ function closeTooltip(){
 
 document.addEventListener('click',function(e){
   if(currentTooltip&&!e.target.closest('.tipo-tooltip')&&!e.target.closest('.tipo-btn')&&!e.target.closest('.legend-item')) closeTooltip();
+  if(currentEditPopup&&!e.target.closest('#edit-qty-popup')&&!e.target.closest('.edit-qty-btn')) closeEditPopup();
+  if(currentFatPopup&&!e.target.closest('[onclick*="showFatInfo"]')){
+    currentFatPopup.remove();currentFatPopup=null;
+  }
+  if(currentFruitPopup&&!e.target.closest('[onclick*="showFruitPopup"]')){
+    currentFruitPopup.remove();currentFruitPopup=null;
+  }
 });
 
 buildUI();
