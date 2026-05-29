@@ -750,6 +750,7 @@ const DAYS=[
         ['Yogur firme descremado','1 pote (100g)',10,10,'MR'],
     ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
     ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
+        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR'],
         ['Banana','1 unidad (100g)',20,1.0,'AR'],
         ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL'],
         ['Naranja','1 unidad mediana (150g)',15,1.0,'AL'],
@@ -779,19 +780,22 @@ const DAYS=[
         ['Tostadas de arroz inflado','3 unidades (30g)',25,2,'AR'],
         ['Dulce de membrillo','1 porción (40g)',25,0,'AR'],
         ['Dulce de batata','1 porción (40g)',25,0,'AR'],
+        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR'],
       ]},
       {name:'Intra (>75 min)',sub:'Alto IG, máxima absorción, mínima carga digestiva. Solo en sesiones largas.',foods:[
         ['Gel deportivo SIS','1 unidad',25,0,'AR'],
         ['Bebida isotónica con HC','500ml (Gatorade/Powerade)',30,0,'AR','EDIT:500:ml:30:0'],
-        ['Gomitas de azúcar','1 paquete chico (30g)',25,0,'AR'],
-        ['Caramelos de goma','6-8 unidades (30g)',25,0,'AR'],
+        ['Gomitas de azúcar','12 gomitas (30g)',30,0,'AR'],
+        ['Caramelos de goma','12 unidades (30g)',30,0,'AR'],
         ['Banana','1 unidad (100g)',20,1.0,'AR'],
-        ['Dátiles','1 unidad (10g)',5,0.2,'AR'],
+        ['Dátiles','3 unidades (30g)',25,0.6,'AR'],
         ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR'],
         ['Azúcar / dextrosa','2 cdas soperas (25g)',25,0,'AR'],
         ['Maltodextrina','2 cdas soperas (25g)',25,0,'AR'],
         ['Bebida casera (agua+azúcar+sal)','500ml + 30g azúcar + pizca sal',30,0,'AR'],
         ['Naranja pelada en gajos','1 unidad grande (200g)',20,1,'AR'],
+        ['Bombones de fruta','3-4 unidades (30g)',30,0,'AR'],
+        ['Mielcitas','5-6 sobres (30g)',30,0,'AR'],
       ]},
       {name:'Post-Entrenamiento',sub:'Alto IG — ventana anabólica. Siempre combiná con proteína.',foods:[
         ['Banana','1 unidad (100g)',20,1.0,'AR'],
@@ -807,6 +811,7 @@ const DAYS=[
         ['Bebida isotónica con HC','500ml',30,0,'AR','EDIT:500:ml:30:0'],
         ['Dulce de leche','1 cda postre (15g)',10,1.0,'AR'],
         ['Dulce de membrillo / batata','1 porción (40g)',25,0,'AR'],
+        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR'],
       ]},
       {name:'Almuerzo / Cena',sub:'Complejos y mixtos lentos. Comidas alejadas del esfuerzo.',foods:[
         ['Arroz integral cocido','½ taza (100g)',25,3,'AL'],
@@ -822,6 +827,7 @@ const DAYS=[
         ['Quínoa cocida','¾ taza (150g)',30,6,'ML'],
         ['Pan integral','1 rebanada (25g)',10,2.5,'ML'],
         ['Mandioca','1 taza rallada (150g)',30,2.0,'AL'],
+        ['Plátano','1 unidad mediana (100g)',20,2.0,'AR'],
       ]},
       {name:'Colaciones',sub:'Opciones prácticas para entre comidas en días de entrenamiento.',foods:[
         ['Banana','1 unidad (100g)',20,1.0,'AR'],
@@ -834,7 +840,7 @@ const DAYS=[
     ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
         ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0'],
         ['Tostadas de arroz + dulce de leche','3 tostadas + 1 cda (40g total)',25,2,'AR'],
-        ['Pan integral + mermelada','1 rebanada + 1 cda',15,2,'ML'],
+        ['Pan integral + mermelada dietética','1 rebanada + 1 cda (5 pts)',15,2,'AL'],
         ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL'],
         ['Galletitas integrales','5 unidades (30g)',20,3,'AL'],
       ]},
@@ -854,6 +860,7 @@ const DAYS=[
         ['Yogur firme descremado','1 pote (100g)',10,10,'MR'],
     ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
     ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
+        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR'],
         ['Leche descremada','1 vaso (200ml)',10,6.0,'MR','EDIT:200:ml:10:6.0'],
         ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL'],
         ['Naranja','1 unidad mediana (150g)',15,1.0,'AL'],
@@ -1469,6 +1476,10 @@ function showFruitPopup(btn, type) {
     frutas_desecadas: {
       title: 'Frutas desecadas con los mismos puntos',
       text: 'En igual cantidad de gramos, estas frutas desecadas tienen aproximadamente los mismos hidratos de carbono:<br><br><strong>🟤 Ciruela pasa &nbsp;·&nbsp; 🍑 Orejón de durazno &nbsp;·&nbsp; 🍐 Orejón de pera &nbsp;·&nbsp; 🍇 Pasas de uva &nbsp;·&nbsp; 🍑 Higo seco &nbsp;·&nbsp; 🍎 Manzana desecada &nbsp;·&nbsp; 🌴 Dátiles &nbsp;·&nbsp; 🍑 Orejón de damasco</strong><br><br><span style="font-size:11px;color:#8896A8;">⚠️ Las frutas desecadas concentran mucho más azúcar por volumen que las frescas — tené en cuenta las porciones.</span>'
+    },
+    tuberculos: {
+      title: 'Vegetales feculentos con los mismos puntos (≈20 pts / 100g)',
+      text: 'En igual cantidad de gramos, estos alimentos tienen aproximadamente los mismos hidratos de carbono:<br><br><strong>🥔 Papa &nbsp;·&nbsp; 🍠 Batata / Boniato / Camote &nbsp;·&nbsp; 🌽 Choclo &nbsp;·&nbsp; 🍌 Plátano &nbsp;·&nbsp; 🟤 Mandioca</strong><br><br><span style="font-size:11px;color:#8896A8;">⚠️ A diferencia de la banana (fruta), el plátano se comporta nutricionalmente más como un vegetal feculento — menos dulce, mayor almidón, índice glucémico más moderado.</span>'
     }
   };
   const d = data[type];
@@ -1496,8 +1507,12 @@ function showFruitPopup(btn, type) {
 const FRUIT_CLICKABLE = {
   'Banana': 'banana',
   'Uvas': 'banana',
-  'Plátano': 'banana',
   'Higo': 'banana',
+  'Papa': 'tuberculos',
+  'Batata / Boniato': 'tuberculos',
+  'Choclo': 'tuberculos',
+  'Plátano': 'tuberculos',
+  'Mandioca': 'tuberculos',
   'Manzana / Pera': 'frutas_a',
   'Manzana': 'frutas_a',
   'Kiwi': 'frutas_a',
