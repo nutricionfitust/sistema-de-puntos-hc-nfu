@@ -102,6 +102,13 @@ body::after{content:'';position:fixed;bottom:-15%;right:-10%;width:50vw;height:5
 .food-table td{padding:8px 10px;border-bottom:0.5px solid var(--gray-100);color:var(--gray-800);vertical-align:middle;cursor:pointer;transition:background 0.1s;}
 .food-table tr:hover td{background:var(--blue-50);}
 .food-table tr.selected td{background:#EFF8FF;}
+.food-table tr:focus{outline:none;}
+.food-table td:focus{outline:none;}
+.tipo-btn:focus{outline:none;}
+.legend-item:focus{outline:none;}
+.food-table button:focus{outline:none;}
+.food-table tr:focus-visible{outline:none;}
+.food-table td:focus-visible{outline:none;}
 .food-table tr.selected td:first-child{border-left:3px solid var(--blue-700);padding-left:8px;}
 .food-table td.c{text-align:center;}
 .pts-num{font-weight:700;color:var(--blue-700);font-size:14px;}
@@ -1040,7 +1047,7 @@ function buildUI(){
               const gVal=String(f[3]).replace('.',',');
               if(hasFat){
                 const fatInfo=fatKey.split('FATS:')[1].replace(/'/g,"\'").replace(/"/g,'&quot;');
-                return `<button onclick="event.stopPropagation();showFatInfo(this,'${fatInfo}')" style="background:none;border:none;cursor:pointer;color:#A855C8;font-weight:600;font-size:12px;padding:0;text-decoration:none;">${gVal}g 🤔</button>`;
+                return `<button onclick="event.stopPropagation();showFatInfo(this,'${fatInfo}')" style="background:none;border:none;cursor:pointer;color:#A855C8;font-weight:600;font-size:12px;padding:0;text-decoration:none;outline:none;">${gVal}g 🤔</button>`;
               }
               return `<span style="color:#A855C8">${gVal}g</span>`;
             })()}</td>
@@ -1426,6 +1433,7 @@ function closeFatInfoPopup(){
   const el = currentFatPopup;
   currentFatPopup = null;
   el.classList.add('popup-leaving');
+  if(document.activeElement) document.activeElement.blur();
   setTimeout(()=>{ if(el.parentNode) el.remove(); }, 200);
 }
 
@@ -1571,6 +1579,7 @@ function closeFruitPopup(){
   const el = currentFruitPopup;
   currentFruitPopup = null;
   el.classList.add('popup-leaving');
+  if(document.activeElement) document.activeElement.blur();
   setTimeout(()=>{ if(el.parentNode) el.remove(); }, 200);
 }
 
@@ -1598,7 +1607,7 @@ const FRUIT_CLICKABLE = {
 function wrapFruitName(name) {
   const type = FRUIT_CLICKABLE[name];
   if(!type) return name;
-  return `<button onclick="event.stopPropagation();showFruitPopup(this,'${type}')" style="background:none;border:none;cursor:pointer;color:inherit;font:inherit;font-weight:600;padding:0;text-align:left;text-decoration:none;">${name}</button>`;
+  return `<button onclick="event.stopPropagation();showFruitPopup(this,'${type}')" style="background:none;border:none;cursor:pointer;color:inherit;font:inherit;font-weight:600;padding:0;text-align:left;text-decoration:none;outline:none;">${name}</button>`;
 }
 
 buildUI();
@@ -1637,6 +1646,7 @@ function closeTooltip(){
   currentTooltip=null;
   el.classList.remove('entering');
   el.classList.add('leaving');
+  if(document.activeElement) document.activeElement.blur();
   setTimeout(()=>{ if(el.parentNode) el.remove(); }, 200);
 }
 
