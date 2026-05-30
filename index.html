@@ -1236,10 +1236,12 @@ function resetEdit(key,baseQty,unit,hcPerBase,protPerBase,origDisplay){
 
 function closeEditPopup(){
   if(currentEditPopup){
-    currentEditPopup.style.opacity='0';
-    currentEditPopup.style.transform='scale(0.9)';
-    currentEditPopup.style.transition='opacity 0.15s,transform 0.15s';
-    setTimeout(()=>{if(currentEditPopup)currentEditPopup.remove();currentEditPopup=null;},160);
+    const el=currentEditPopup;
+    currentEditPopup=null;
+    el.style.transition='opacity 0.18s,transform 0.18s';
+    el.style.opacity='0';
+    el.style.transform='translate(-50%,-50%) scale(0.88)';
+    setTimeout(()=>{ if(el.parentNode) el.remove(); },190);
   }
 }
 
