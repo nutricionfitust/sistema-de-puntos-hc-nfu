@@ -1,1 +1,3 @@
-# sistema-de-puntos-hc-nfu
+Sistema de Puntos de Hidratos de Carbono.
+
+Rendimiento. Nutrición Deportiva.
