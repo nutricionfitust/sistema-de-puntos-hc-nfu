@@ -1615,14 +1615,16 @@ buildUI();
 function openTooltip(e,tipo){
   e.stopPropagation();
   if(currentTooltip){
+    const wasSame = currentTooltip._tipo === tipo;
     closeTooltip();
-    return;
+    if(wasSame) return; // toggle: mismo tipo → solo cerrar
   }
   const t=TIPOS[tipo];
   const trigger=e.currentTarget;
   const rect=trigger.getBoundingClientRect();
   const el=document.createElement('div');
   el.className='tipo-tooltip entering';
+  el._tipo=tipo; // guardar qué tipo es para detectar toggle
   el.style.position='fixed';
   let left=rect.left;
   let top=rect.bottom+8;
@@ -1631,7 +1633,6 @@ function openTooltip(e,tipo){
   el.style.left=left+'px';
   el.style.top=top+'px';
   el.innerHTML=`<button class="tooltip-close" onclick="event.stopPropagation();closeTooltip()">×</button><p class="tooltip-title">${tipo} — ${t.label}</p><p class="tooltip-desc">${t.desc}</p>`;
-  // click anywhere inside tooltip also closes it (except the close btn which handles itself)
   el.addEventListener('click', function(ev){
     ev.stopPropagation();
     closeTooltip();
