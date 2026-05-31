@@ -1196,6 +1196,95 @@ function previewEdit(key,qty,baseQty,unit,hcPerBase,protPerBase){
   if(prev) prev.textContent=`→ ${newHC} puntos HC · ${String(newProt).replace('.',',')}g prot`;
 }
 
+
+function smartQtyDisplay(newQty, baseQty, unit, origText){
+  // Igual a la base → texto original
+  if(newQty === baseQty) return origText || (baseQty+unit);
+
+  // Múltiplo entero?
+  const factor = newQty / baseQty;
+  const isExactMultiple = Math.abs(factor - Math.round(factor)) < 0.0001 && Math.round(factor) > 0;
+
+  if(!isExactMultiple) return newQty+unit;
+
+  const mult = Math.round(factor);
+  if(!origText) return newQty+unit;
+
+  // Regex: captura "prefijo_descriptivo (NNNg/ml)"
+  const m = origText.match(/^(.+?)\s*\((\d+(?:\.\d+)?)\s*(g|ml)\)\s*$/);
+  if(!m) return newQty+unit;
+
+  const descPart = m[1].trim();
+
+  // Extraer número inicial (incluye fracciones unicode como ½=0.5, ¼=0.25, ¾=0.75)
+  const fracMap = {'½':0.5,'¼':0.25,'¾':0.75,'⅓':1/3,'⅔':2/3,'⅛':0.125,'⅜':0.375,'⅝':0.625,'⅞':0.875};
+  let origNum = null;
+  let restText = '';
+
+  // Intentar número entero/decimal al inicio: "4 cdas..." o "1.5 tazas..."
+  const numMatch = descPart.match(/^(\d+(?:\.\d+)?)\s+(.+)$/);
+  if(numMatch){
+    origNum  = parseFloat(numMatch[1]);
+    restText = numMatch[2].trim();
+  } else {
+    // Fracción unicode al inicio: "½ taza ..." o "½ unidad ..."
+    const fracMatch = descPart.match(/^([½¼¾⅓⅔⅛⅜⅝⅞])\s*(.*)$/);
+    if(fracMatch){
+      origNum  = fracMap[fracMatch[1]] || 0.5;
+      restText = fracMatch[2].trim();
+    } else {
+      // Sin número → tratar como 1
+      origNum  = 1;
+      restText = descPart;
+    }
+  }
+
+  const newNum = origNum * mult;
+  // Si el resultado no es entero limpio, mostrar solo qty+unit
+  if(Math.abs(newNum - Math.round(newNum)) > 0.01) return newQty+unit;
+  const newNumInt = Math.round(newNum);
+
+  // Pluralizar todas las palabras de restText cuando newNumInt > 1
+  const singularMap = {
+    'unidad':'unidades','vaso':'vasos','pote':'potes','trozo':'trozos',
+    'rebanada':'rebanadas','taza':'tazas','sobre':'sobres','gel':'geles',
+    'porción':'porciones','cda':'cdas','cdita':'cditas','clara':'claras',
+    'huevo':'huevos','filete':'filetes','pechuga':'pechugas','dátil':'dátiles',
+    'pasa':'pasas','gajo':'gajos','bombón':'bombones','caramelo':'caramelos',
+    'gomita':'gomitas','galleta':'galletas','tostada':'tostadas','barrita':'barritas',
+    // adjetivos
+    'grande':'grandes','pequeña':'pequeñas','pequeño':'pequeños','mediana':'medianas',
+    'mediano':'medianos','grande':'grandes','magra':'magras','magro':'magros',
+  };
+  const alreadyPlural = new Set(['cdas','cditas','unidades','potes','trozos','rebanadas',
+    'vasos','tazas','sobres','geles','gomitas','bombones','gajos','dátiles','pasas',
+    'claras','huevos','filetes','pechugas','grandes','pequeñas','pequeños','medianas',
+    'medianos','magras','magros']);
+
+  function pluralizeWord(w, n){
+    if(n <= 1) return w;
+    const wl = w.toLowerCase();
+    if(singularMap[wl]){
+      const plural = singularMap[wl];
+      return w[0] === w[0].toUpperCase() && w[0] !== w[0].toLowerCase()
+        ? plural.charAt(0).toUpperCase()+plural.slice(1) : plural;
+    }
+    if(alreadyPlural.has(wl)) return w;
+    // Regla general español
+    if(/[aeiouáéíóúü]$/i.test(w)) return w+'s';
+    return w+'es';
+  }
+
+  // Pluralizar cada palabra del restText
+  const pluralizedRest = newNumInt > 1
+    ? restText.split(' ').map(w => pluralizeWord(w, newNumInt)).join(' ')
+    : restText;
+
+  const newNumStr = Number.isInteger(newNumInt) ? String(newNumInt) : String(newNum);
+  const newDesc = newNumStr + (pluralizedRest ? ' '+pluralizedRest : '');
+  return newDesc + ' (' + newQty + unit + ')';
+}
+
 function applyEdit(key,baseQty,unit,hcPerBase,protPerBase){
   const input=document.getElementById('edit-qty-input');
   const qty=parseFloat(input.value)||baseQty;
@@ -1204,12 +1293,12 @@ function applyEdit(key,baseQty,unit,hcPerBase,protPerBase){
   customProt[key]=Math.round((qty/baseQty)*protPerBase*10)/10;
   // Store display text
   // Si la cantidad ingresada es igual a la base, no cambiar el display
-  if(qty !== baseQty) customQtyDisplay[key]=qty+' '+unit;
+  if(qty !== baseQty) customQtyDisplay[key]=smartQtyDisplay(qty,baseQty,unit,origQtyText[key]);
   // Update pts and prot cells
   const ptsEl=document.getElementById('pts-'+key);
   const protEl=document.getElementById('prot-'+key);
   if(ptsEl) ptsEl.textContent=customHC[key];
-  if(protEl) protEl.textContent=String(customProt[key]).replace('.',',')+' g';
+  if(protEl) protEl.innerHTML=`${String(customProt[key]).replace('.',',')}g`;
   // Update qty display text in row
   const row=document.getElementById('row-'+key);
   if(row){
@@ -1217,7 +1306,7 @@ function applyEdit(key,baseQty,unit,hcPerBase,protPerBase){
     if(qtySpan){
       const editBtn=qtySpan.querySelector('.edit-qty-btn');
       if(qty !== baseQty){
-        qtySpan.textContent=qty+' '+unit+' ';
+        qtySpan.textContent=smartQtyDisplay(qty,baseQty,unit,origQtyText[key])+' ';
       } else {
         const orig = origQtyText[key] || (baseQty+' '+unit);
         qtySpan.textContent=orig+' ';
@@ -1245,7 +1334,7 @@ function resetEdit(key,baseQty,unit,hcPerBase,protPerBase){
   const ptsEl=document.getElementById('pts-'+key);
   const protEl=document.getElementById('prot-'+key);
   if(ptsEl) ptsEl.textContent=hcPerBase;
-  if(protEl && protPerBase>0) protEl.textContent=String(protPerBase).replace('.',',')+' g';
+  if(protEl && protPerBase>0) protEl.innerHTML=`${String(protPerBase).replace('.',',')}g`;
   const row=document.getElementById('row-'+key);
   if(row){
     const qtySpan=row.querySelector('.qty-text');
@@ -1285,10 +1374,12 @@ function updateAll(){
       const comp=COMPLEMENTS[compKey];
       if(!comp)return;
       const f=comp.items[ci];
-      totalProt+=f[2]*cnt;
-      totalHC+=f[4]*cnt; // HC from complement (index 4)
+      const hcValC  = customHC[key]   !== undefined ? customHC[key]   : f[4];
+      const protValC= customProt[key] !== undefined ? customProt[key] : f[2];
+      totalProt+=protValC*cnt;
+      totalHC+=hcValC*cnt;
       totalCount+=cnt;
-      for(let i=0;i<cnt;i++) tags.push({key,name:f[0],hc:f[4],prot:f[2],isComp:true});
+      for(let i=0;i<cnt;i++) tags.push({key,name:f[0],hc:hcValC,prot:protValC,isComp:true});
       return;
     }
     const parts=key.split('-');
@@ -1432,14 +1523,14 @@ function applyEditComp(ckey,compKey,ci,baseQty,unit,hcPerBase,protPerBase,fatPer
   customProt[ckey]=Math.round((qty/baseQty)*protPerBase*10)/10;
   if(fatPerBase>0) customFat[ckey]=Math.round((qty/baseQty)*fatPerBase*10)/10;
   // Si la cantidad ingresada es igual a la base, no cambiar el display
-  if(qty !== baseQty) customQtyDisplay[ckey]=qty+' '+unit;
+  if(qty !== baseQty) customQtyDisplay[ckey]=smartQtyDisplay(qty,baseQty,unit,origQtyText[ckey]);
   const ptsEl=document.getElementById('pts-'+ckey);
   const protEl=document.getElementById('prot-'+ckey);
   const fatEl=document.getElementById('fat-'+ckey);
   if(ptsEl) ptsEl.textContent=customHC[ckey]||'—';
-  if(protEl){ protEl.textContent=customProt[ckey]>0?String(customProt[ckey]).replace('.',',')+' g':'—'; protEl.style.color='var(--green-600)'; protEl.style.fontWeight='600'; }
+  if(protEl){ protEl.innerHTML=customProt[ckey]>0?`${String(customProt[ckey]).replace('.',',')}g`:'—'; protEl.style.color='var(--green-600)'; protEl.style.fontWeight='600'; }
   if(fatEl && fatPerBase>0){
-    const newFatStr=String(customFat[ckey]).replace('.',',')+' g';
+    const newFatStr=String(customFat[ckey]).replace('.',',')+'g';
     const fatBtn=fatEl.querySelector('button');
     const fatSpan=fatEl.querySelector('span');
     if(fatBtn){ fatBtn.textContent=newFatStr+' 🤔'; }
@@ -1452,7 +1543,7 @@ function applyEditComp(ckey,compKey,ci,baseQty,unit,hcPerBase,protPerBase,fatPer
     if(qtySpan){
       const editBtn=qtySpan.querySelector('.edit-qty-btn');
       if(qty !== baseQty){
-        qtySpan.textContent=qty+' '+unit+' ';
+        qtySpan.textContent=smartQtyDisplay(qty,baseQty,unit,origQtyText[ckey])+' ';
       } else {
         const orig = origQtyText[ckey] || (baseQty+' '+unit);
         qtySpan.textContent=orig+' ';
@@ -1479,9 +1570,9 @@ function resetEditComp(ckey,baseQty,unit,hcPerBase,protPerBase,fatPerBase){
   const protEl=document.getElementById('prot-'+ckey);
   const fatEl=document.getElementById('fat-'+ckey);
   if(ptsEl) ptsEl.textContent=hcPerBase||'—';
-  if(protEl) protEl.textContent=protPerBase>0?String(protPerBase).replace('.',',')+' g':'—';
+  if(protEl) protEl.innerHTML=protPerBase>0?`${String(protPerBase).replace('.',',')}g`:'—';
   if(fatEl && fatPerBase>0){
-    const origFatStr=String(fatPerBase).replace('.',',')+' g';
+    const origFatStr=String(fatPerBase).replace('.',',')+'g';
     const fatBtn=fatEl.querySelector('button');
     const fatSpan=fatEl.querySelector('span');
     if(fatBtn){ fatBtn.textContent=origFatStr+' 🤔'; }
