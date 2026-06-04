@@ -47,6 +47,8 @@ body::after{content:'';position:fixed;bottom:-15%;right:-10%;width:50vw;height:5
 .counter-lbl{font-size:10px;font-weight:500;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.08em;}
 .counter-num{font-size:20px;font-weight:600;color:white;line-height:1.1;transition:transform 0.2s;}
 .counter-num.hc{color:#7DD3FA;}
+.counter-num.fat-total{color:#C99BD8;font-size:0.95rem;font-weight:600;opacity:0.9;}
+.counter-pill-fat{opacity:0.85;}
 .counter-num.prot{color:var(--green-100);}
 .counter-num.bump{transform:scale(1.18);}
 .reset-btn{margin-left:auto;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:var(--radius-sm);color:rgba(255,255,255,0.75);font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 14px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:5px;}
@@ -186,6 +188,15 @@ body::after{content:'';position:fixed;bottom:-15%;right:-10%;width:50vw;height:5
 .ref-item strong{font-size:13px;color:rgba(255,255,255,0.9);display:block;margin-bottom:2px;}
 .ref-desc{font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;}
 .info-important{font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;background:rgba(255,255,255,0.06);border-radius:var(--radius-sm);padding:0.65rem 0.85rem;}
+.info-fat-note {
+  margin-top: 0.7rem;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.6);
+  padding: 0 0.85rem;
+}
+.info-fat-note strong { color: #C99BD8; }
+
 .info-important strong{color:rgba(255,255,255,0.85);}
 .info-important em{color:#7DD3FA;font-style:normal;}
 
@@ -581,6 +592,9 @@ function unlockApp(){
         <div class="info-important">
           <strong>Importante:</strong> Los alimentos MR y ML aportan proteína además de HC. Esa proteína <em>se descuenta de tu requerimiento proteico diario</em> — no la cuentes dos veces. Las tablas están organizadas por momento del día. Podés combinar alimentos del mismo grupo hasta llegar a tus puntos asignados.
         </div>
+        <div class="info-fat-note">
+          <strong>Sobre las grasas:</strong> no las contabilizamos como objetivo activo — la selección ya prioriza fuentes magras y grasas saludables. El contador <span style="color:#C99BD8;font-weight:600;">"Grasas aprox."</span> es solo una referencia. Procurá no quedar por debajo de un piso mínimo de seguridad (~0,5 g/kg de peso) para preservar la función hormonal y la absorción de vitaminas liposolubles.
+        </div>
         <div class="info-ok-btn">
           <button onclick="closeInfo()">Ok ✓</button>
         </div>
@@ -597,6 +611,10 @@ function unlockApp(){
     <div class="counter-pill">
       <span class="counter-lbl">Proteína acumulada</span>
       <span class="counter-num prot" id="total-prot">0 g</span>
+    </div>
+    <div class="counter-pill counter-pill-fat">
+      <span class="counter-lbl" style="font-size:10px;opacity:0.75;">Grasas aprox.</span>
+      <span class="counter-num fat-total" id="total-fat">0 g</span>
     </div>
     <div class="counter-pill">
       <span class="counter-lbl">Seleccionados</span>
@@ -780,143 +798,143 @@ const DAYS=[
     type:'entreno',
     groups:[
       {name:'Desayuno / Merienda',sub:'Complejos principalmente si entrenás tarde; algunos rápidos si entrenás pronto.',foods:[
-        ['Avena','4 cdas soperas (40g)',25,4,'ML','EDIT:40:g:25:4.0'],
-        ['Banana','1 unidad (100g)',20,1.0,'AR','EDIT:100:g:20:1.0'],
-        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR','EDIT:40:g:20:15.0'],
-        ['Barrita proteica Integra','1 unidad (40g)',15,12.0,'ML','EDIT:40:g:15:12.0'],
-        ['Copos de maíz sin azúcar','1 taza (30g)',20,2.7,'AR','EDIT:30:g:20:2.7'],
-        ['Dulce de leche','1 cda postre (15g)',10,1.0,'AR','EDIT:15:g:10:1.0'],
-        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5'],
-        ['Frutillas','7 unidades (100g)',10,0.5,'AL','EDIT:100:g:10:0.5'],
-        ['Galletitas integrales','5 unidades (30g)',20,3,'AL','EDIT:30:g:20:3.0'],
-        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL','EDIT:30:g:20:3.0'],
-        ['Kiwi','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5'],
-        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0'],
-        ['Leche descremada','1 vaso (200ml)',10,6.0,'MR','EDIT:200:ml:10:6.0'],
-        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
-        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
-        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL','EDIT:120:g:15:0.5'],
-        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0'],
-        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0'],
-        ['Miel','1 cda postre (15g)',10,0,'AR','EDIT:15:g:10:0.0'],
-        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL','EDIT:150:g:15:1.0'],
-        ['Pan árabe blanco','1 unidad (60g)',30,6.0,'AR','EDIT:60:g:30:6.0'],
-        ['Pan integral','1 rebanada (25g)',10,2.5,'ML','EDIT:25:g:10:2.5'],
-        ['Pan lactal blanco','1 rebanada (25g)',15,2.0,'AR','EDIT:25:g:15:2.0'],
-        ['Tostadas de arroz inflado','3 unidades (30g)',25,2,'AR','EDIT:30:g:25:2.0'],
-        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10'],
-        ['Yogur líquido descremado','100ml',10,4.0,'MR','EDIT:100:ml:10:4.0'],
+        ['Avena','4 cdas soperas (40g)',25,4,'ML','EDIT:40:g:25:4.0',2.8],
+        ['Banana','1 unidad (100g)',20,1.0,'AR','EDIT:100:g:20:1.0',0.2],
+        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR','EDIT:40:g:20:15.0',6.0],
+        ['Barrita proteica Integra','1 unidad (40g)',15,12.0,'ML','EDIT:40:g:15:12.0',5.0],
+        ['Copos de maíz sin azúcar','1 taza (30g)',20,2.7,'AR','EDIT:30:g:20:2.7',0.3],
+        ['Dulce de leche','1 cda postre (15g)',10,1.0,'AR','EDIT:15:g:10:1.0',1.0],
+        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5',0.1],
+        ['Frutillas','7 unidades (100g)',10,0.5,'AL','EDIT:100:g:10:0.5',0.3],
+        ['Galletitas integrales','5 unidades (30g)',20,3,'AL','EDIT:30:g:20:3.0',3.0],
+        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL','EDIT:30:g:20:3.0',4.5],
+        ['Kiwi','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5',0.4],
+        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0',3.0],
+        ['Leche descremada','1 vaso (200ml)',10,6.0,'MR','EDIT:200:ml:10:6.0',0.1],
+        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0',0.1],
+        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0',0.2],
+        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL','EDIT:120:g:15:0.5',0.2],
+        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0',0.0],
+        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0',0.0],
+        ['Miel','1 cda postre (15g)',10,0,'AR','EDIT:15:g:10:0.0',0.0],
+        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL','EDIT:150:g:15:1.0',0.3],
+        ['Pan árabe blanco','1 unidad (60g)',30,6.0,'AR','EDIT:60:g:30:6.0',1.2],
+        ['Pan integral','1 rebanada (25g)',10,2.5,'ML','EDIT:25:g:10:2.5',0.5],
+        ['Pan lactal blanco','1 rebanada (25g)',15,2.0,'AR','EDIT:25:g:15:2.0',0.8],
+        ['Tostadas de arroz inflado','3 unidades (30g)',25,2,'AR','EDIT:30:g:25:2.0',0.3],
+        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10',0.2],
+        ['Yogur líquido descremado','100ml',10,4.0,'MR','EDIT:100:ml:10:4.0',0.1],
       ]},
       {name:'Pre-Entrenamiento',sub:'Moderado a alto IG, fácil digestión, baja fibra y grasa.',foods:[
-        ['Arroz blanco cocido','½ taza (100g)',25,2,'AR','EDIT:100:g:25:2.0'],
-        ['Azúcar / dextrosa','2 cdas soperas (25g)',25,0,'AR','EDIT:25:g:25:0.0'],
-        ['Banana','1 unidad (100g)',20,1.0,'AR','EDIT:100:g:20:1.0'],
-        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR','EDIT:40:g:20:15.0'],
-        ['Bebida isotónica con HC','500ml (Gatorade/Powerade)',30,0,'AR','EDIT:500:ml:30:0'],
-        ['Copos de maíz sin azúcar','1 taza (30g)',20,2.7,'AR','EDIT:30:g:20:2.7'],
-        ['Dátiles','1 unidad (10g)',5,0.2,'AR','EDIT:10:g:5:0.2'],
-        ['Dulce de batata','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0'],
-        ['Dulce de leche','1 cda postre (15g)',10,1.0,'AR','EDIT:15:g:10:1.0'],
-        ['Dulce de membrillo','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0'],
-        ['Exprimido de naranja','1 vaso grande (200ml)',20,1,'AR','EDIT:200:ml:20:1.0'],
-        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0'],
-        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
-        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
-        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0'],
-        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0'],
-        ['Miel','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0'],
-        ['Pan árabe blanco','1 unidad (60g)',30,6.0,'AR','EDIT:60:g:30:6.0'],
-        ['Pan lactal blanco','1 rebanada (25g)',15,2.0,'AR','EDIT:25:g:15:2.0'],
-        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR','EDIT:15:g:10:0.3'],
-        ['Tostadas de arroz inflado','3 unidades (30g)',25,2,'AR','EDIT:30:g:25:2.0'],
-        ['Uvas','12 unidades (75g)',15,0.5,'AR','EDIT:75:g:15:0.5'],
-        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10'],
-        ['Yogur líquido descremado','100ml',10,4.0,'MR','EDIT:100:ml:10:4.0'],
+        ['Arroz blanco cocido','½ taza (100g)',25,2,'AR','EDIT:100:g:25:2.0',0.2],
+        ['Azúcar / dextrosa','2 cdas soperas (25g)',25,0,'AR','EDIT:25:g:25:0.0',0.0],
+        ['Banana','1 unidad (100g)',20,1.0,'AR','EDIT:100:g:20:1.0',0.2],
+        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR','EDIT:40:g:20:15.0',6.0],
+        ['Bebida isotónica con HC','500ml (Gatorade/Powerade)',30,0,'AR','EDIT:500:ml:30:0',0.0],
+        ['Copos de maíz sin azúcar','1 taza (30g)',20,2.7,'AR','EDIT:30:g:20:2.7',0.3],
+        ['Dátiles','1 unidad (10g)',5,0.2,'AR','EDIT:10:g:5:0.2',0.0],
+        ['Dulce de batata','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0',0.1],
+        ['Dulce de leche','1 cda postre (15g)',10,1.0,'AR','EDIT:15:g:10:1.0',1.0],
+        ['Dulce de membrillo','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0',0.0],
+        ['Exprimido de naranja','1 vaso grande (200ml)',20,1,'AR','EDIT:200:ml:20:1.0',0.4],
+        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0',3.0],
+        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0',0.1],
+        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0',0.2],
+        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0',0.0],
+        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0',0.0],
+        ['Miel','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0',0.0],
+        ['Pan árabe blanco','1 unidad (60g)',30,6.0,'AR','EDIT:60:g:30:6.0',1.2],
+        ['Pan lactal blanco','1 rebanada (25g)',15,2.0,'AR','EDIT:25:g:15:2.0',0.8],
+        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR','EDIT:15:g:10:0.3',0.1],
+        ['Tostadas de arroz inflado','3 unidades (30g)',25,2,'AR','EDIT:30:g:25:2.0',0.3],
+        ['Uvas','12 unidades (75g)',15,0.5,'AR','EDIT:75:g:15:0.5',0.1],
+        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10',0.2],
+        ['Yogur líquido descremado','100ml',10,4.0,'MR','EDIT:100:ml:10:4.0',0.1],
       ]},
       {name:'Intra (>75 min)',sub:'Alto IG, máxima absorción, mínima carga digestiva. Solo en sesiones largas.',foods:[
-        ['Azúcar / dextrosa','2 cdas soperas (25g)',25,0,'AR','EDIT:25:g:25:0.0'],
-        ['Banana','1 unidad (100g)',20,1.0,'AR','EDIT:100:g:20:1.0'],
-        ['Bebida casera (agua+azúcar+sal)','500ml + 30g azúcar + pizca sal',30,0,'AR','EDIT:500:ml:30:0.0'],
-        ['Bebida isotónica con HC','500ml (Gatorade/Powerade)',30,0,'AR','EDIT:500:ml:30:0'],
-        ['Bombones de fruta','3-4 unidades (30g)',30,0,'AR','EDIT:30:g:30:0.0'],
-        ['Caramelos de goma','12 unidades (30g)',30,0,'AR','EDIT:30:g:30:0.0'],
-        ['Dátiles','3 unidades (30g)',25,0.6,'AR','EDIT:30:g:25:0.6'],
-        ['Dulce de batata','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0'],
-        ['Dulce de membrillo','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0'],
-        ['Exprimido de naranja','1 vaso grande (200ml)',20,1,'AR','EDIT:200:ml:20:1.0'],
-        ['Gel deportivo SIS','1 unidad (60ml)',25,0,'AR','EDIT:60:ml:25:0.0'],
-        ['Gomitas de azúcar','12 gomitas (30g)',30,0,'AR','EDIT:30:g:30:0.0'],
-        ['Maltodextrina','2 cdas soperas (25g)',25,0,'AR','EDIT:25:g:25:0.0'],
-        ['Mielcitas','5-6 sobres (30g)',30,0,'AR','EDIT:30:g:30:0.0'],
-        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR','EDIT:15:g:10:0.3'],
+        ['Azúcar / dextrosa','2 cdas soperas (25g)',25,0,'AR','EDIT:25:g:25:0.0',0.0],
+        ['Banana','1 unidad (100g)',20,1.0,'AR','EDIT:100:g:20:1.0',0.2],
+        ['Bebida casera (agua+azúcar+sal)','500ml + 30g azúcar + pizca sal',30,0,'AR','EDIT:500:ml:30:0.0',0.0],
+        ['Bebida isotónica con HC','500ml (Gatorade/Powerade)',30,0,'AR','EDIT:500:ml:30:0',0.0],
+        ['Bombones de fruta','3-4 unidades (30g)',30,0,'AR','EDIT:30:g:30:0.0',0.0],
+        ['Caramelos de goma','12 unidades (30g)',30,0,'AR','EDIT:30:g:30:0.0',0.0],
+        ['Dátiles','3 unidades (30g)',25,0.6,'AR','EDIT:30:g:25:0.6',0.0],
+        ['Dulce de batata','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0',0.1],
+        ['Dulce de membrillo','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0',0.0],
+        ['Exprimido de naranja','1 vaso grande (200ml)',20,1,'AR','EDIT:200:ml:20:1.0',0.4],
+        ['Gel deportivo SIS','1 unidad (60ml)',25,0,'AR','EDIT:60:ml:25:0.0',0.0],
+        ['Gomitas de azúcar','12 gomitas (30g)',30,0,'AR','EDIT:30:g:30:0.0',0.0],
+        ['Maltodextrina','2 cdas soperas (25g)',25,0,'AR','EDIT:25:g:25:0.0',0.0],
+        ['Mielcitas','5-6 sobres (30g)',30,0,'AR','EDIT:30:g:30:0.0',0.0],
+        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR','EDIT:15:g:10:0.3',0.1],
       ]},
       {name:'Post-Entrenamiento',sub:'Alto IG — ventana anabólica. Siempre combiná con proteína.',foods:[
-        ['Arroz blanco cocido','½ taza (100g)',25,2,'AR','EDIT:100:g:25:2.0'],
-        ['Azúcar / dextrosa','2 cdas soperas (25g)',25,0,'AR','EDIT:25:g:25:0.0'],
-        ['Banana','1 unidad (100g)',20,1.0,'AR','EDIT:100:g:20:1.0'],
-        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR','EDIT:40:g:20:15.0'],
-        ['Bebida isotónica con HC','500ml',30,0,'AR','EDIT:500:ml:30:0'],
-        ['Copos de maíz sin azúcar','1 taza (30g)',20,2.7,'AR','EDIT:30:g:20:2.7'],
-        ['Dátiles','1 unidad (10g)',5,0.2,'AR','EDIT:10:g:5:0.2'],
-        ['Dulce de batata','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0'],
-        ['Dulce de leche','1 cda postre (15g)',10,1.0,'AR','EDIT:15:g:10:1.0'],
-        ['Dulce de membrillo','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0'],
-        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5'],
-        ['Exprimido de naranja','1 vaso grande (200ml)',20,1,'AR','EDIT:200:ml:20:1.0'],
-        ['Frutillas','7 unidades (100g)',10,0.5,'AL','EDIT:100:g:10:0.5'],
-        ['Kiwi','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5'],
-        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0'],
-        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
-        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
-        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL','EDIT:120:g:15:0.5'],
-        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0'],
-        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0'],
-        ['Miel','1 cdita (10g)',15,0,'AR','EDIT:10:g:15:0.0'],
-        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL','EDIT:150:g:15:1.0'],
-        ['Pan árabe blanco','1 unidad (60g)',30,6.0,'AR','EDIT:60:g:30:6.0'],
-        ['Pan lactal blanco','1 rebanada (25g)',15,2.0,'AR','EDIT:25:g:15:2.0'],
-        ['Papa','½ unidad grande (100g)',20,2.0,'AR','EDIT:100:g:20:2.0'],
-        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR','EDIT:15:g:10:0.3'],
-        ['Tostadas de arroz inflado','4 tostadas (30g)',25,0,'AR','EDIT:30:g:25:0.0'],
-        ['Uvas','12 unidades (75g)',15,0.5,'AR','EDIT:75:g:15:0.5'],
-        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10'],
+        ['Arroz blanco cocido','½ taza (100g)',25,2,'AR','EDIT:100:g:25:2.0',0.2],
+        ['Azúcar / dextrosa','2 cdas soperas (25g)',25,0,'AR','EDIT:25:g:25:0.0',0.0],
+        ['Banana','1 unidad (100g)',20,1.0,'AR','EDIT:100:g:20:1.0',0.2],
+        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR','EDIT:40:g:20:15.0',6.0],
+        ['Bebida isotónica con HC','500ml',30,0,'AR','EDIT:500:ml:30:0',0.0],
+        ['Copos de maíz sin azúcar','1 taza (30g)',20,2.7,'AR','EDIT:30:g:20:2.7',0.3],
+        ['Dátiles','1 unidad (10g)',5,0.2,'AR','EDIT:10:g:5:0.2',0.0],
+        ['Dulce de batata','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0',0.1],
+        ['Dulce de leche','1 cda postre (15g)',10,1.0,'AR','EDIT:15:g:10:1.0',1.0],
+        ['Dulce de membrillo','1 porción (40g)',25,0,'AR','EDIT:40:g:25:0.0',0.0],
+        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5',0.1],
+        ['Exprimido de naranja','1 vaso grande (200ml)',20,1,'AR','EDIT:200:ml:20:1.0',0.4],
+        ['Frutillas','7 unidades (100g)',10,0.5,'AL','EDIT:100:g:10:0.5',0.3],
+        ['Kiwi','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5',0.4],
+        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0',3.0],
+        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0',0.1],
+        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0',0.2],
+        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL','EDIT:120:g:15:0.5',0.2],
+        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0',0.0],
+        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0',0.0],
+        ['Miel','1 cdita (10g)',15,0,'AR','EDIT:10:g:15:0.0',0.0],
+        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL','EDIT:150:g:15:1.0',0.3],
+        ['Pan árabe blanco','1 unidad (60g)',30,6.0,'AR','EDIT:60:g:30:6.0',1.2],
+        ['Pan lactal blanco','1 rebanada (25g)',15,2.0,'AR','EDIT:25:g:15:2.0',0.8],
+        ['Papa','½ unidad grande (100g)',20,2.0,'AR','EDIT:100:g:20:2.0',0.1],
+        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR','EDIT:15:g:10:0.3',0.1],
+        ['Tostadas de arroz inflado','4 tostadas (30g)',25,0,'AR','EDIT:30:g:25:0.0',0.3],
+        ['Uvas','12 unidades (75g)',15,0.5,'AR','EDIT:75:g:15:0.5',0.1],
+        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10',0.2],
       ]},
       {name:'Almuerzo / Cena',sub:'Complejos y mixtos lentos. Comidas alejadas del esfuerzo.',foods:[
-        ['Arroz blanco cocido','½ taza (100g)',25,2,'AR','EDIT:100:g:25:2.0'],
-        ['Arroz integral cocido','½ taza (100g)',25,3,'AL','EDIT:100:g:25:3.0'],
-        ['Batata / Boniato','½ unidad grande (100g)',20,2.0,'AL','EDIT:100:g:20:2.0'],
-        ['Choclo','100g (½ mazorca aprox.)',20,2.0,'AL','EDIT:100:g:20:2.0'],
-        ['Legumbres (porotos/garbanzos)','1 taza cocida (200g)',25,12,'ML','EDIT:200:g:25:12.0'],
-        ['Lentejas cocidas','1 taza (200g)',25,14,'ML','EDIT:200:g:25:14.0'],
-        ['Mandioca','1 taza rallada (150g)',30,2.0,'AL','EDIT:150:g:30:2.0'],
-        ['Pan integral','1 rebanada (25g)',10,2.5,'ML','EDIT:25:g:10:2.5'],
-        ['Papa','½ unidad grande (100g)',20,2.0,'AR','EDIT:100:g:20:2.0'],
-        ['Pasta integral cocida','1 taza (150g)',30,6,'ML','EDIT:150:g:30:6.0'],
-        ['Pasta refinada cocida','1 taza (150g)',30,5,'AR','EDIT:150:g:30:5.0'],
-        ['Plátano','1 unidad mediana (100g)',20,2.0,'AR','EDIT:100:g:20:2.0'],
-        ['Quínoa cocida','¾ taza (150g)',30,6,'ML','EDIT:150:g:30:6.0'],
+        ['Arroz blanco cocido','½ taza (100g)',25,2,'AR','EDIT:100:g:25:2.0',0.2],
+        ['Arroz integral cocido','½ taza (100g)',25,3,'AL','EDIT:100:g:25:3.0',0.8],
+        ['Batata / Boniato','½ unidad grande (100g)',20,2.0,'AL','EDIT:100:g:20:2.0',0.1],
+        ['Choclo','100g (½ mazorca aprox.)',20,2.0,'AL','EDIT:100:g:20:2.0',1.2],
+        ['Legumbres (porotos/garbanzos)','1 taza cocida (200g)',25,12,'ML','EDIT:200:g:25:12.0',2.4],
+        ['Lentejas cocidas','1 taza (200g)',25,14,'ML','EDIT:200:g:25:14.0',0.8],
+        ['Mandioca','1 taza rallada (150g)',30,2.0,'AL','EDIT:150:g:30:2.0',0.4],
+        ['Pan integral','1 rebanada (25g)',10,2.5,'ML','EDIT:25:g:10:2.5',0.5],
+        ['Papa','½ unidad grande (100g)',20,2.0,'AR','EDIT:100:g:20:2.0',0.1],
+        ['Pasta integral cocida','1 taza (150g)',30,6,'ML','EDIT:150:g:30:6.0',0.8],
+        ['Pasta refinada cocida','1 taza (150g)',30,5,'AR','EDIT:150:g:30:5.0',0.9],
+        ['Plátano','1 unidad mediana (100g)',20,2.0,'AR','EDIT:100:g:20:2.0',0.3],
+        ['Quínoa cocida','¾ taza (150g)',30,6,'ML','EDIT:150:g:30:6.0',2.8],
           ]},
       {name:'Colaciones',sub:'Opciones prácticas para entre comidas en días de entrenamiento.',foods:[
-        ['Banana','1 unidad (100g)',20,1.0,'AR','EDIT:100:g:20:1.0'],
-        ['Barrita proteica Integra','1 unidad (40g)',15,12.0,'ML','EDIT:40:g:15:12.0'],
-        ['Dátiles','1 unidad (10g)',5,0.2,'AR','EDIT:10:g:5:0.2'],
-        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5'],
-        ['Frutillas','7 unidades (100g)',10,0.5,'AL','EDIT:100:g:10:0.5'],
-        ['Galletitas integrales','5 unidades (30g)',20,3,'AL','EDIT:30:g:20:3.0'],
-        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL','EDIT:30:g:20:3.0'],
-        ['Kiwi','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5'],
-        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0'],
-        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
-        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
-        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL','EDIT:120:g:15:0.5'],
-        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0'],
-        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0'],
-        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL','EDIT:150:g:15:1.0'],
-        ['Pan integral + mermelada dietética','1 rebanada + 1 cda (5 pts)',15,2,'AL','EDIT:25:g:15:2.0'],
-        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR','EDIT:15:g:10:0.3'],
-        ['Tostadas de arroz + dulce de leche','3 tostadas + 1 cda (40g total)',25,2,'AR','EDIT:40:g:25:2.0'],
-        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10'],
-        ['Yogur líquido descremado','100ml',10,4.0,'MR','EDIT:100:ml:10:4.0'],
+        ['Banana','1 unidad (100g)',20,1.0,'AR','EDIT:100:g:20:1.0',0.2],
+        ['Barrita proteica Integra','1 unidad (40g)',15,12.0,'ML','EDIT:40:g:15:12.0',5.0],
+        ['Dátiles','1 unidad (10g)',5,0.2,'AR','EDIT:10:g:5:0.2',0.0],
+        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5',0.1],
+        ['Frutillas','7 unidades (100g)',10,0.5,'AL','EDIT:100:g:10:0.5',0.3],
+        ['Galletitas integrales','5 unidades (30g)',20,3,'AL','EDIT:30:g:20:3.0',3.0],
+        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL','EDIT:30:g:20:3.0',4.5],
+        ['Kiwi','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5',0.4],
+        ['Leche chocolatada','1 vaso (200ml)',20,6.0,'MR','EDIT:200:ml:20:6.0',3.0],
+        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0',0.1],
+        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0',0.2],
+        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL','EDIT:120:g:15:0.5',0.2],
+        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0',0.0],
+        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0',0.0],
+        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL','EDIT:150:g:15:1.0',0.3],
+        ['Pan integral + mermelada dietética','1 rebanada + 1 cda (5 pts)',15,2,'AL','EDIT:25:g:15:2.0',0.5],
+        ['Pasas de uva','1 cda sopera (15g)',10,0.3,'AR','EDIT:15:g:10:0.3',0.1],
+        ['Tostadas de arroz + dulce de leche','3 tostadas + 1 cda (40g total)',25,2,'AR','EDIT:40:g:25:2.0',1.2],
+        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10',0.2],
+        ['Yogur líquido descremado','100ml',10,4.0,'MR','EDIT:100:ml:10:4.0',0.1],
       ]},
     ]
   },
@@ -926,54 +944,54 @@ const DAYS=[
     type:'descanso',
     groups:[
       {name:'Desayuno / Merienda',sub:'Complejos y mixtos lentos. Sin urgencia de timing.',foods:[
-        ['Avena','4 cdas soperas (40g)',25,4,'ML','EDIT:40:g:25:4.0'],
-        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR','EDIT:40:g:20:15.0'],
-        ['Barrita proteica Integra','1 unidad (40g)',15,12.0,'ML','EDIT:40:g:15:12.0'],
-        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5'],
-        ['Frutillas','7 unidades (100g)',10,0.5,'AL','EDIT:100:g:10:0.5'],
-        ['Galletitas integrales','5 unidades (30g)',20,3,'AL','EDIT:30:g:20:3.0'],
-        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL','EDIT:30:g:20:3.0'],
-        ['Kiwi','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5'],
-        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
-        ['Leche descremada','1 vaso (200ml)',10,6.0,'MR','EDIT:200:ml:10:6.0'],
-        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
-        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL','EDIT:120:g:15:0.5'],
-        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0'],
-        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0'],
-        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL','EDIT:150:g:15:1.0'],
-        ['Pan integral','1 rebanada (25g)',10,2.5,'ML','EDIT:25:g:10:2.5'],
-        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10'],
-        ['Yogur líquido descremado','100ml',10,4.0,'MR','EDIT:100:ml:10:4.0'],
+        ['Avena','4 cdas soperas (40g)',25,4,'ML','EDIT:40:g:25:4.0',2.8],
+        ['Barrita HC + proteína','1 unidad (40g)',20,15.0,'MR','EDIT:40:g:20:15.0',6.0],
+        ['Barrita proteica Integra','1 unidad (40g)',15,12.0,'ML','EDIT:40:g:15:12.0',5.0],
+        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5',0.1],
+        ['Frutillas','7 unidades (100g)',10,0.5,'AL','EDIT:100:g:10:0.5',0.3],
+        ['Galletitas integrales','5 unidades (30g)',20,3,'AL','EDIT:30:g:20:3.0',3.0],
+        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL','EDIT:30:g:20:3.0',4.5],
+        ['Kiwi','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5',0.4],
+        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0',0.1],
+        ['Leche descremada','1 vaso (200ml)',10,6.0,'MR','EDIT:200:ml:10:6.0',0.1],
+        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0',0.2],
+        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL','EDIT:120:g:15:0.5',0.2],
+        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0',0.0],
+        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0',0.0],
+        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL','EDIT:150:g:15:1.0',0.3],
+        ['Pan integral','1 rebanada (25g)',10,2.5,'ML','EDIT:25:g:10:2.5',0.5],
+        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10',0.2],
+        ['Yogur líquido descremado','100ml',10,4.0,'MR','EDIT:100:ml:10:4.0',0.1],
       ]},
       {name:'Almuerzo / Cena',sub:'Absorción lenta, fibrosos, bajo índice glucémico.',foods:[
-        ['Arroz integral cocido','½ taza (100g)',25,3,'AL','EDIT:100:g:25:3.0'],
-        ['Avena','4 cdas soperas (40g)',25,4,'ML','EDIT:40:g:25:4.0'],
-        ['Batata / Boniato','½ unidad grande (100g)',20,2.0,'AL','EDIT:100:g:20:2.0'],
-        ['Choclo','100g (½ mazorca aprox.)',20,2.0,'AL','EDIT:100:g:20:2.0'],
-        ['Legumbres cocidas','1 taza (200g)',25,12,'ML','EDIT:200:g:25:12.0'],
-        ['Lentejas cocidas','1 taza (200g)',25,14,'ML','EDIT:200:g:25:14.0'],
-        ['Mandioca','1 taza rallada (150g)',30,2.0,'AL','EDIT:150:g:30:2.0'],
-        ['Pan integral','1 rebanada (25g)',10,2.5,'ML','EDIT:25:g:10:2.5'],
-        ['Pasta integral cocida','1 taza (150g)',30,6,'ML','EDIT:150:g:30:6.0'],
-        ['Plátano','1 unidad mediana (100g)',20,2.0,'AR','EDIT:100:g:20:2.0'],
-        ['Quínoa cocida','¾ taza (150g)',30,6,'ML','EDIT:150:g:30:6.0'],
+        ['Arroz integral cocido','½ taza (100g)',25,3,'AL','EDIT:100:g:25:3.0',0.8],
+        ['Avena','4 cdas soperas (40g)',25,4,'ML','EDIT:40:g:25:4.0',2.8],
+        ['Batata / Boniato','½ unidad grande (100g)',20,2.0,'AL','EDIT:100:g:20:2.0',0.1],
+        ['Choclo','100g (½ mazorca aprox.)',20,2.0,'AL','EDIT:100:g:20:2.0',1.2],
+        ['Legumbres cocidas','1 taza (200g)',25,12,'ML','EDIT:200:g:25:12.0',2.4],
+        ['Lentejas cocidas','1 taza (200g)',25,14,'ML','EDIT:200:g:25:14.0',0.8],
+        ['Mandioca','1 taza rallada (150g)',30,2.0,'AL','EDIT:150:g:30:2.0',0.4],
+        ['Pan integral','1 rebanada (25g)',10,2.5,'ML','EDIT:25:g:10:2.5',0.5],
+        ['Pasta integral cocida','1 taza (150g)',30,6,'ML','EDIT:150:g:30:6.0',0.8],
+        ['Plátano','1 unidad mediana (100g)',20,2.0,'AR','EDIT:100:g:20:2.0',0.3],
+        ['Quínoa cocida','¾ taza (150g)',30,6,'ML','EDIT:150:g:30:6.0',2.8],
           ]},
       {name:'Colaciones',sub:'Opciones de bajo índice glucémico para entre comidas.',foods:[
-        ['Barrita proteica Integra','1 unidad (40g)',15,12.0,'ML','EDIT:40:g:15:12.0'],
-        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5'],
-        ['Frutillas','7 unidades (100g)',10,0.5,'AL','EDIT:100:g:10:0.5'],
-        ['Galletitas integrales','5 unidades (30g)',20,3,'AL','EDIT:30:g:20:3.0'],
-        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL','EDIT:30:g:20:3.0'],
-        ['Kiwi','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5'],
-        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0'],
-        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0'],
-        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL','EDIT:120:g:15:0.5'],
-        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0'],
-        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0'],
-        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL','EDIT:150:g:15:1.0'],
-        ['Pan integral + ½ palta','1 rebanada + ½ palta',15,3,'AL','EDIT:25:g:15:3.0'],
-        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10'],
-        ['Yogur líquido descremado','100ml',10,4.0,'MR','EDIT:100:ml:10:4.0'],
+        ['Barrita proteica Integra','1 unidad (40g)',15,12.0,'ML','EDIT:40:g:15:12.0',5.0],
+        ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5',0.1],
+        ['Frutillas','7 unidades (100g)',10,0.5,'AL','EDIT:100:g:10:0.5',0.3],
+        ['Galletitas integrales','5 unidades (30g)',20,3,'AL','EDIT:30:g:20:3.0',3.0],
+        ['Granola sin azúcar','½ taza (30g)',20,3.0,'AL','EDIT:30:g:20:3.0',4.5],
+        ['Kiwi','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5',0.4],
+        ['Leche descremada','100ml',5,3.0,'MR','EDIT:100:ml:5:3.0',0.1],
+        ['Leche descremada proteica','100ml',5,5.0,'MR','EDIT:100:ml:5:5.0',0.2],
+        ['Manzana / Pera','1 unidad (120g)',15,0.5,'AL','EDIT:120:g:15:0.5',0.2],
+        ['Mermelada común','1 cda sopera (20g)',15,0,'AR','EDIT:20:g:15:0.0',0.0],
+        ['Mermelada dietética','1 cda sopera (20g)',5,0,'AR','EDIT:20:g:5:0.0',0.0],
+        ['Naranja','1 unidad mediana (150g)',15,1.0,'AL','EDIT:150:g:15:1.0',0.3],
+        ['Pan integral + ½ palta','1 rebanada + ½ palta',15,3,'AL','EDIT:25:g:15:3.0',6.5],
+        ['Yogur firme descremado','100g',10,10,'MR','EDIT:100:g:10:10',0.2],
+        ['Yogur líquido descremado','100ml',10,4.0,'MR','EDIT:100:ml:10:4.0',0.1],
       ]},
     ]
   }
@@ -1044,7 +1062,7 @@ function buildUI(){
         const curProt=customProt[key]!==undefined?customProt[key]:f[3];
         const displayQty = customQtyDisplay[key] || f[1];
         const qtyCell=isEdit
-          ?`<span class="qty-text">${displayQty} <button class="edit-qty-btn" onclick="event.stopPropagation();openEditQty(this,'${key}',${ep[1]},'${ep[2]}',${ep[3]},${ep[4]})" title="Editar cantidad">✏️</button></span>`
+          ?`<span class="qty-text">${displayQty} <button class="edit-qty-btn" onclick="event.stopPropagation();openEditQty(this,'${key}',${ep[1]},'${ep[2]}',${ep[3]},${ep[4]},${f[6]||0})" title="Editar cantidad">✏️</button></span>`
           :`<span class="qty-text">${f[1]}</span>`;
         rows+=`<tr id="row-${key}" class="${cnt>0?'selected':''}" onclick="addFood('${key}','${day.id}',${gi},${fi})">
           <td>${wrapFruitName(f[0])}${cnt>0?`<span class="count-badge">${cnt}</span>`:''}</td>
@@ -1174,7 +1192,7 @@ function addFood(key,dayId,gi,fi){
   }
 }
 
-function openEditQty(btn, key, baseQty, unit, hcPerBase, protPerBase){
+function openEditQty(btn, key, baseQty, unit, hcPerBase, protPerBase, fatPerBase){
   closeEditPopup();
   // Guardar texto original la primera vez (antes de cualquier edición)
   if(!origQtyText[key]){
@@ -1190,18 +1208,18 @@ function openEditQty(btn, key, baseQty, unit, hcPerBase, protPerBase){
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
       <input id="edit-qty-input" type="number" min="1" max="5000" value="${currentQty}"
         style="flex:1;border:1.5px solid #B5D4F4;border-radius:8px;padding:7px 10px;font-size:18px;text-align:center;font-family:DM Sans,sans-serif;color:#042C53;outline:none;"
-        oninput="previewEdit('${key}',this.value,${baseQty},'${unit}',${hcPerBase},${protPerBase})"
-        onkeydown="if(event.key==='Enter')applyEdit('${key}',${baseQty},'${unit}',${hcPerBase},${protPerBase})"
+        oninput="previewEdit('${key}',this.value,${baseQty},'${unit}',${hcPerBase},${protPerBase},${fatPerBase||0})"
+        onkeydown="if(event.key==='Enter')applyEdit('${key}',${baseQty},'${unit}',${hcPerBase},${protPerBase},${fatPerBase||0})"
       >
       <span style="font-size:13px;font-weight:500;color:#185FA5;">${unit}</span>
     </div>
     <div id="edit-preview" style="font-size:12px;color:#378ADD;margin-bottom:10px;min-height:18px;font-weight:500;"></div>
     <div style="display:flex;gap:8px;">
-      <button onclick="applyEdit('${key}',${baseQty},'${unit}',${hcPerBase},${protPerBase})"
+      <button onclick="applyEdit('${key}',${baseQty},'${unit}',${hcPerBase},${protPerBase},${fatPerBase||0})"
         style="flex:1;background:#185FA5;color:white;border:none;border-radius:8px;padding:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">
         Aplicar ✓
       </button>
-      <button onclick="resetEdit('${key}',${baseQty},'${unit}',${hcPerBase},${protPerBase})"
+      <button onclick="resetEdit('${key}',${baseQty},'${unit}',${hcPerBase},${protPerBase},${fatPerBase||0})"
         style="background:transparent;border:1.5px solid #D3D8E0;border-radius:8px;padding:8px 10px;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;color:#8896A8;">
         Reset
       </button>
@@ -1210,7 +1228,7 @@ function openEditQty(btn, key, baseQty, unit, hcPerBase, protPerBase){
   currentEditPopup=pop;
   const input=pop.querySelector('#edit-qty-input');
   input.focus();input.select();
-  previewEdit(key,currentQty,baseQty,unit,hcPerBase,protPerBase);
+  previewEdit(key,currentQty,baseQty,unit,hcPerBase,protPerBase,fatPerBase||0);
 }
 
 function round1(n){
@@ -1218,76 +1236,77 @@ function round1(n){
   return Math.round((n + Number.EPSILON) * 10) / 10;
 }
 
-function previewEdit(key,qty,baseQty,unit,hcPerBase,protPerBase){
+function previewEdit(key,qty,baseQty,unit,hcPerBase,protPerBase,fatPerBase){
   qty=parseFloat(qty)||0;
   const newHC=round1((qty/baseQty)*hcPerBase);
   const newProt=round1((qty/baseQty)*protPerBase);
+  const newFat=fatPerBase>0?round1((qty/baseQty)*fatPerBase):0;
   const prev=document.getElementById('edit-preview');
-  if(prev) prev.textContent=`→ ${String(newHC).replace('.',',')} puntos HC · ${String(newProt).replace('.',',')}g prot`;
+  let txt=`→ ${String(newHC).replace('.',',')} puntos HC · ${String(newProt).replace('.',',')}g prot`;
+  if(newFat>0) txt+=` · ${String(newFat).replace('.',',')}g grasas`;
+  if(prev) prev.textContent=txt;
 }
 
 
 function smartQtyDisplay(newQty, baseQty, unit, origText){
   if(newQty === baseQty) return origText || (baseQty+unit);
-
-  const factor = newQty / baseQty;
-  const isExactMultiple = Math.abs(factor - Math.round(factor)) < 0.0001 && Math.round(factor) > 0;
-  if(!isExactMultiple) return newQty+unit;
-
-  const mult = Math.round(factor);
   if(!origText) return newQty+unit;
 
+  // Extraer prefijo descriptivo y gramos de la base: "1 taza (200g)" → desc="1 taza", base=200
   const m = origText.match(/^(.+?)\s*\((\d+(?:\.\d+)?)\s*(g|ml)\)\s*$/);
   if(!m) return newQty+unit;
 
   const descPart = m[1].trim();
-  const fracIn  = {'½':0.5,'¼':0.25,'¾':0.75,'⅓':1/3,'⅔':2/3,'⅛':0.125,'⅜':0.375,'⅝':0.625,'⅞':0.875};
-  // Salida de fracciones para números < 1 o no enteros
-  const fracOut = {
-    0.25:'¼', 0.5:'½', 0.75:'¾',
-    0.125:'⅛', 0.375:'⅜', 0.625:'⅝', 0.875:'⅞',
-    '1/3':'⅓','2/3':'⅔'
-  };
 
+  // Mapa de fracciones de entrada (para leer el número base del descriptor)
+  const fracIn = {'½':0.5,'¼':0.25,'¾':0.75,'⅓':1/3,'⅔':2/3,'⅛':0.125,'⅜':0.375,'⅝':0.625,'⅞':0.875};
+
+  // Extraer el número inicial del descriptor (entero, decimal o fracción unicode)
   let origNum = null, restText = '';
   const numMatch = descPart.match(/^(\d+(?:\.\d+)?)\s+(.+)$/);
   if(numMatch){
     origNum  = parseFloat(numMatch[1]);
     restText = numMatch[2].trim();
   } else {
-    const fracMatch = descPart.match(/^([½¼¾⅓⅔⅛⅜⅝⅞])\s*(.*)$/);
+    const fracMatch = descPart.match(/^(\d*)\s*([½¼¾⅓⅔⅛⅜⅝⅞])\s*(.*)$/);
     if(fracMatch){
-      origNum  = fracIn[fracMatch[1]] || 0.5;
-      restText = fracMatch[2].trim();
+      const intp = fracMatch[1] ? parseFloat(fracMatch[1]) : 0;
+      origNum  = intp + (fracIn[fracMatch[2]] || 0);
+      restText = fracMatch[3].trim();
     } else {
       origNum = 1; restText = descPart;
     }
   }
 
-  const newNum = origNum * mult;
+  if(!origNum || origNum <= 0) return newQty+unit;
 
-  // Representar newNum: entero, fracción unicode, o número decimal
-  let newNumStr;
-  if(Number.isInteger(newNum) || Math.abs(newNum - Math.round(newNum)) < 0.001){
-    newNumStr = String(Math.round(newNum));
-  } else {
-    // Buscar fracción unicode exacta
-    let found = false;
-    for(const [val, sym] of Object.entries(fracOut)){
-      if(Math.abs(newNum - parseFloat(val)) < 0.001){ newNumStr = sym; found = true; break; }
-    }
-    // Parte entera + fracción: ej 1.5 → "1½", 1.25 → "1¼"
-    if(!found){
-      const intPart = Math.floor(newNum);
-      const fracPart = newNum - intPart;
-      let fracSym = '';
-      for(const [val, sym] of Object.entries(fracOut)){
-        if(Math.abs(fracPart - parseFloat(val)) < 0.001){ fracSym = sym; break; }
-      }
-      if(fracSym) newNumStr = (intPart > 0 ? intPart : '') + fracSym;
-      else return newQty+unit; // No se puede representar → solo número+unidad
-    }
+  // factor de unidades nuevas = (newQty/baseQty) * origNum
+  // Ej: base 200g="1 taza", newQty 300 → (300/200)*1 = 1.5 tazas
+  // Ej: base 60g="½ unidad", newQty 90 → (90/60)*0.5 = 0.75 unidad
+  const newNum = (newQty / baseQty) * origNum;
+
+  // ¿newNum es múltiplo de 0.25 (un cuarto)?
+  const quarters = newNum * 4;
+  const isQuarterMultiple = Math.abs(quarters - Math.round(quarters)) < 0.02 && Math.round(quarters) > 0;
+
+  if(!isQuarterMultiple){
+    // No representable en cuartos → mostrar solo gramos/ml
+    return newQty+unit;
   }
+
+  // Construir representación mixta: parte entera + fracción
+  const totalQuarters = Math.round(quarters);
+  const intPart  = Math.floor(totalQuarters / 4);
+  const fracQ    = totalQuarters % 4; // 0,1,2,3
+  const fracSym  = {0:'', 1:'¼', 2:'½', 3:'¾'}[fracQ];
+
+  let numStr;
+  if(intPart > 0 && fracSym)      numStr = intPart + fracSym;       // 1¼, 2½
+  else if(intPart > 0)            numStr = String(intPart);          // 1, 2, 3
+  else                            numStr = fracSym;                  // ¼, ½, ¾
+
+  // Pluralización: plural si el valor numérico total es > 1
+  const isPlural = newNum > 1.0001;
 
   const singularMap = {
     'unidad':'unidades','vaso':'vasos','pote':'potes','trozo':'trozos',
@@ -1296,41 +1315,40 @@ function smartQtyDisplay(newQty, baseQty, unit, origText){
     'huevo':'huevos','filete':'filetes','pechuga':'pechugas','dátil':'dátiles',
     'pasa':'pasas','gajo':'gajos','bombón':'bombones','caramelo':'caramelos',
     'gomita':'gomitas','galleta':'galletas','tostada':'tostadas','barrita':'barritas',
+    'lata':'latas','mazorca':'mazorcas','cdita':'cditas','cucharada':'cucharadas',
     'grande':'grandes','pequeña':'pequeñas','pequeño':'pequeños','mediana':'medianas',
-    'mediano':'medianos','magra':'magras','magro':'magros',
+    'mediano':'medianos','magra':'magras','magro':'magros','cocido':'cocidos','cocida':'cocidas'
   };
   const alreadyPlural = new Set(['cdas','cditas','unidades','potes','trozos','rebanadas',
     'vasos','tazas','sobres','geles','gomitas','bombones','gajos','dátiles','pasas',
-    'claras','huevos','filetes','pechugas','grandes','pequeñas','pequeños','medianas',
-    'medianos','magras','magros']);
+    'claras','huevos','filetes','pechugas','latas','mazorcas','cucharadas','grandes',
+    'pequeñas','pequeños','medianas','medianos','magras','magros','cocidos','cocidas']);
 
-  function pluralizeWord(w, n){
-    if(n <= 1) return w;
+  function pluralizeWord(w){
     const wl = w.toLowerCase();
     if(singularMap[wl]){
       const p = singularMap[wl];
-      return w[0]===w[0].toUpperCase()&&w[0]!==w[0].toLowerCase()?p[0].toUpperCase()+p.slice(1):p;
+      return (w[0]===w[0].toUpperCase() && w[0]!==w[0].toLowerCase()) ? p[0].toUpperCase()+p.slice(1) : p;
     }
     if(alreadyPlural.has(wl)) return w;
     return /[aeiouáéíóúü]$/i.test(w) ? w+'s' : w+'es';
   }
 
-  // Solo pluralizar si newNum > 1 (entero)
-  const numericNewNum = newNum;
-  const shouldPlural = Number.isInteger(numericNewNum) && numericNewNum > 1;
-  const pluralizedRest = shouldPlural
-    ? restText.split(' ').map(w => pluralizeWord(w, numericNewNum)).join(' ')
+  const finalRest = isPlural
+    ? restText.split(' ').map(pluralizeWord).join(' ')
     : restText;
 
-  return newNumStr + (pluralizedRest ? ' '+pluralizedRest : '') + ' ('+newQty+unit+')';
+  return numStr + (finalRest ? ' '+finalRest : '') + ' ('+newQty+unit+')';
 }
 
-function applyEdit(key,baseQty,unit,hcPerBase,protPerBase){
+function applyEdit(key,baseQty,unit,hcPerBase,protPerBase,fatPerBase){
   const input=document.getElementById('edit-qty-input');
   const qty=parseFloat(input.value)||baseQty;
   customQty[key]=qty;
   customHC[key]=round1((qty/baseQty)*hcPerBase);
   customProt[key]=round1((qty/baseQty)*protPerBase);
+  if(fatPerBase>0) customFat[key]=round1((qty/baseQty)*fatPerBase);
+  else customFat[key]=0;
   // Store display text
   // Si la cantidad ingresada es igual a la base, no cambiar el display
   if(qty !== baseQty) customQtyDisplay[key]=smartQtyDisplay(qty,baseQty,unit,origQtyText[key]);
@@ -1368,7 +1386,7 @@ function applyEdit(key,baseQty,unit,hcPerBase,protPerBase){
   closeEditPopup();
 }
 
-function resetEdit(key,baseQty,unit,hcPerBase,protPerBase){
+function resetEdit(key,baseQty,unit,hcPerBase,protPerBase,fatPerBase){
   delete customHC[key]; delete customProt[key]; delete customFat[key];
   delete customQty[key]; delete customQtyDisplay[key];
   const ptsEl=document.getElementById('pts-'+key);
@@ -1401,7 +1419,7 @@ function closeEditPopup(){
 }
 
 function updateAll(){
-  let totalHC=0,totalProt=0,totalCount=0;
+  let totalHC=0,totalProt=0,totalFat=0,totalCount=0;
   const tags=[];
   Object.entries(counts).forEach(([key,cnt])=>{
     if(cnt<=0)return;
@@ -1416,8 +1434,10 @@ function updateAll(){
       const f=comp.items[ci];
       const hcValC  = customHC[key]   !== undefined ? customHC[key]   : f[4];
       const protValC= customProt[key] !== undefined ? customProt[key] : f[2];
+      const fatValC = customFat[key]  !== undefined ? customFat[key]  : (f[3]||0);
       totalProt+=protValC*cnt;
       totalHC+=hcValC*cnt;
+      totalFat+=fatValC*cnt;
       totalCount+=cnt;
       for(let i=0;i<cnt;i++) tags.push({key,name:f[0],hc:hcValC,prot:protValC,isComp:true});
       return;
@@ -1431,8 +1451,10 @@ function updateAll(){
     const f=day.groups[gi].foods[fi];
     const hcVal = customHC[key]!==undefined ? customHC[key] : f[2];
     const protVal = customProt[key]!==undefined ? customProt[key] : f[3];
+    const fatVal = customFat[key]!==undefined ? customFat[key] : (f[6]||0);
     totalHC+=hcVal*cnt;
     totalProt+=protVal*cnt;
+    totalFat+=fatVal*cnt;
     totalCount+=cnt;
     for(let i=0;i<cnt;i++) tags.push({key,name:f[0],hc:hcVal,prot:protVal});
   });
@@ -1441,6 +1463,8 @@ function updateAll(){
   const protEl=document.getElementById('total-prot');
   hcEl.textContent=String(round1(totalHC)).replace('.',',');
   protEl.textContent=String(round1(totalProt)).replace('.',',')+' g';
+  const fatEl=document.getElementById('total-fat');
+  if(fatEl) fatEl.textContent=String(round1(totalFat)).replace('.',',')+' g';
   document.getElementById('total-count').textContent=totalCount;
   hcEl.classList.add('bump'); protEl.classList.add('bump');
   setTimeout(()=>{hcEl.classList.remove('bump');protEl.classList.remove('bump');},220);
