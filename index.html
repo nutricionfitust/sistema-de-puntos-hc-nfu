@@ -620,6 +620,7 @@ function unlockApp(){
       <span class="counter-lbl">Seleccionados</span>
       <span class="counter-num" id="total-count" style="color:rgba(255,255,255,0.65)">0</span>
     </div>
+    <button id="kcal-btn" onclick="event.stopPropagation();showKcalPopup(this)" title="Ver kcal" style="background:rgba(255,140,30,0.15);border:1px solid rgba(255,140,30,0.4);border-radius:50%;width:30px;height:30px;color:#FF8C1E;font-size:18px;font-weight:700;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0;outline:none;transition:background 0.18s;">+</button>
     <button class="reset-btn" onclick="resetAll()">↺ Reiniciar</button>
   </div>
   <div class="selected-sub" id="selected-box-wrap">
@@ -1466,6 +1467,7 @@ function updateAll(){
   const fatEl=document.getElementById('total-fat');
   if(fatEl) fatEl.textContent=String(round1(totalFat)).replace('.',',')+' g';
   document.getElementById('total-count').textContent=totalCount;
+  window._totHC=totalHC; window._totProt=totalProt; window._totFat=totalFat;
   hcEl.classList.add('bump'); protEl.classList.add('bump');
   setTimeout(()=>{hcEl.classList.remove('bump');protEl.classList.remove('bump');},220);
 
@@ -1670,6 +1672,36 @@ function closeFatInfoPopup(){
   setTimeout(()=>{ if(el.parentNode) el.remove(); }, 200);
 }
 
+
+let currentKcalPopup = null;
+function closeKcalPopup(){
+  if(!currentKcalPopup) return;
+  const el=currentKcalPopup; currentKcalPopup=null;
+  el.classList.add('popup-leaving');
+  if(document.activeElement) document.activeElement.blur();
+  setTimeout(()=>{ if(el.parentNode) el.remove(); },200);
+}
+function showKcalPopup(btn){
+  if(currentKcalPopup){ closeKcalPopup(); return; }
+  const hc=window._totHC||0, prot=window._totProt||0, fat=window._totFat||0;
+  const kcalHC=hc*4, kcalProt=prot*4, kcalFat=fat*9;
+  const total=Math.round(kcalHC+kcalProt+kcalFat);
+  const pop=document.createElement('div');
+  pop.setAttribute('data-kcal-popup','1');
+  pop.style.cssText='position:fixed;z-index:9999;background:white;border:1.5px solid #FFD0A0;border-radius:14px;box-shadow:0 8px 30px rgba(4,44,83,0.22);padding:1.1rem 1.25rem;width:240px;left:50%;top:50%;transform:translate(-50%,-50%);';
+  pop.classList.add('popup-entering');
+  pop.innerHTML='<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;"><span style="font-size:16px;">🔥</span><p style="font-size:13px;font-weight:700;color:#C2410C;margin:0;">Calorías aprox.</p><button onclick="event.stopPropagation();closeKcalPopup()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#C99;font-size:16px;line-height:1;outline:none;">×</button></div>'+
+    '<div style="font-size:12.5px;color:#7A4A2A;line-height:1.9;">'+
+    'HC: '+String(Math.round(hc*10)/10).replace('.',',')+' × 4 = <strong>'+Math.round(kcalHC)+' kcal</strong><br>'+
+    'Proteína: '+String(Math.round(prot*10)/10).replace('.',',')+' × 4 = <strong>'+Math.round(kcalProt)+' kcal</strong><br>'+
+    'Grasas: '+String(Math.round(fat*10)/10).replace('.',',')+' × 9 = <strong>'+Math.round(kcalFat)+' kcal</strong>'+
+    '</div>'+
+    '<div style="margin-top:10px;padding-top:9px;border-top:1.5px solid #FFE8D0;font-size:15px;font-weight:700;color:#EA580C;text-align:center;">Total: '+total+' kcal</div>';
+  pop.addEventListener('click', function(ev){ ev.stopPropagation(); closeKcalPopup(); });
+  document.body.appendChild(pop);
+  currentKcalPopup=pop;
+}
+
 function showFatInfo(btn, fatText){
   // Toggle: if already open from same button, close
   if(currentFatPopup){
@@ -1752,7 +1784,7 @@ let currentFruitPopup = null;
 let _justClosedModal = false; // bloquea addFood cuando se acaba de cerrar un modal
 
 function isAnyModalOpen(){
-  return !!(currentTooltip || currentEditPopup || currentFatPopup || currentFruitPopup || _justClosedModal);
+  return !!(currentTooltip || currentEditPopup || currentFatPopup || currentFruitPopup || currentKcalPopup || _justClosedModal);
 }
 
 function showFruitPopup(btn, type) {
@@ -1908,6 +1940,9 @@ document.addEventListener('click',function(e){
     closed = true;
   }
 
+  if(currentKcalPopup && !e.target.closest('[data-kcal-popup]') && !e.target.closest('#kcal-btn')){
+    closeKcalPopup(); closed = true;
+  }
   if(closed){
     _justClosedModal = true;
     setTimeout(()=>{ _justClosedModal = false; }, 0);
