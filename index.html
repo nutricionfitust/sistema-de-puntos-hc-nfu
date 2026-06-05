@@ -61,6 +61,7 @@ body::after{content:'';position:fixed;bottom:-15%;right:-10%;width:50vw;height:5
 .sel-tag{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);border-radius:20px;padding:3px 10px;font-size:12px;color:white;cursor:pointer;animation:tagIn 0.18s ease;transition:background 0.15s;}
 .sel-tag:hover{background:rgba(226,75,74,0.35);}
 .sel-tag .pts{color:rgba(255,255,255,0.5);font-size:11px;}
+.sel-tag .qty-mini{color:rgba(255,255,255,0.8);font-size:11px;font-weight:600;}
 .sel-tag .rm{color:rgba(255,255,255,0.55);font-weight:600;font-size:14px;}
 @keyframes tagIn{from{opacity:0;transform:scale(0.82);}to{opacity:1;transform:scale(1);}}
 
@@ -904,6 +905,7 @@ const DAYS=[
         ['Arroz blanco cocido','½ taza (100g)',25,2,'AR','EDIT:100:g:25:2.0',0.2],
         ['Arroz integral cocido','½ taza (100g)',25,3,'AL','EDIT:100:g:25:3.0',0.8],
         ['Batata / Boniato','½ unidad grande (100g)',20,2.0,'AL','EDIT:100:g:20:2.0',0.1],
+        ['Calabaza / Zapallo','100g',5,1.0,'AL','EDIT:100:g:5:1.0',0.2],
         ['Choclo','100g (½ mazorca aprox.)',20,2.0,'AL','EDIT:100:g:20:2.0',1.2],
         ['Legumbres (porotos/garbanzos)','1 taza cocida (200g)',25,12,'ML','EDIT:200:g:25:12.0',2.4],
         ['Lentejas cocidas','1 taza (200g)',25,14,'ML','EDIT:200:g:25:14.0',0.8],
@@ -914,7 +916,7 @@ const DAYS=[
         ['Pasta refinada cocida','1 taza (150g)',30,5,'AR','EDIT:150:g:30:5.0',0.9],
         ['Plátano','1 unidad mediana (100g)',20,2.0,'AR','EDIT:100:g:20:2.0',0.3],
         ['Quínoa cocida','¾ taza (150g)',30,6,'ML','EDIT:150:g:30:6.0',2.8],
-          ]},
+      ]},
       {name:'Colaciones',sub:'Opciones prácticas para entre comidas en días de entrenamiento.',foods:[
         ['Banana','1 unidad (100g)',20,1.0,'AR','EDIT:100:g:20:1.0',0.2],
         ['Barrita proteica Integra','1 unidad (40g)',15,12.0,'ML','EDIT:40:g:15:12.0',5.0],
@@ -968,6 +970,7 @@ const DAYS=[
         ['Arroz integral cocido','½ taza (100g)',25,3,'AL','EDIT:100:g:25:3.0',0.8],
         ['Avena','4 cdas soperas (40g)',25,4,'ML','EDIT:40:g:25:4.0',2.8],
         ['Batata / Boniato','½ unidad grande (100g)',20,2.0,'AL','EDIT:100:g:20:2.0',0.1],
+        ['Calabaza / Zapallo','100g',5,1.0,'AL','EDIT:100:g:5:1.0',0.2],
         ['Choclo','100g (½ mazorca aprox.)',20,2.0,'AL','EDIT:100:g:20:2.0',1.2],
         ['Legumbres cocidas','1 taza (200g)',25,12,'ML','EDIT:200:g:25:12.0',2.4],
         ['Lentejas cocidas','1 taza (200g)',25,14,'ML','EDIT:200:g:25:14.0',0.8],
@@ -976,7 +979,7 @@ const DAYS=[
         ['Pasta integral cocida','1 taza (150g)',30,6,'ML','EDIT:150:g:30:6.0',0.8],
         ['Plátano','1 unidad mediana (100g)',20,2.0,'AR','EDIT:100:g:20:2.0',0.3],
         ['Quínoa cocida','¾ taza (150g)',30,6,'ML','EDIT:150:g:30:6.0',2.8],
-          ]},
+      ]},
       {name:'Colaciones',sub:'Opciones de bajo índice glucémico para entre comidas.',foods:[
         ['Barrita proteica Integra','1 unidad (40g)',15,12.0,'ML','EDIT:40:g:15:12.0',5.0],
         ['Durazno / Damasco','1 unidad (75g)',10,0.5,'AL','EDIT:75:g:10:0.5',0.1],
@@ -1378,7 +1381,11 @@ function applyEdit(key,baseQty,unit,hcPerBase,protPerBase,fatPerBase){
       row.className='selected';
       const nameCell=row.cells[0];
       const badge=nameCell.querySelector('.count-badge');
-      if(!badge) nameCell.innerHTML=nameCell.textContent+`<span class="count-badge">1</span>`;
+      if(!badge){
+        const kp=key.split('-'); const kday=DAYS.find(d=>d.id===kp[0]);
+        const kf=kday?kday.groups[parseInt(kp[1])].foods[parseInt(kp[2])]:null;
+        nameCell.innerHTML=(kf?wrapFruitName(kf[0]):nameCell.textContent)+`<span class="count-badge">1</span>`;
+      }
     }
     row.style.background='#DBEAFE';
     setTimeout(()=>row.style.background='',600);
@@ -1440,7 +1447,8 @@ function updateAll(){
       totalHC+=hcValC*cnt;
       totalFat+=fatValC*cnt;
       totalCount+=cnt;
-      for(let i=0;i<cnt;i++) tags.push({key,name:f[0],hc:hcValC,prot:protValC,isComp:true});
+      tags.push({key,name:f[0],hc:round1(hcValC*cnt),prot:round1(protValC*cnt),cnt,
+                 qtyStr:tagQtyStr(f[1],customQtyDisplay[key],f[6]&&f[6].startsWith&&f[6].startsWith('EDIT')?f[6]:(f[5]&&f[5].startsWith&&f[5].startsWith('EDIT')?f[5]:''),cnt),isComp:true});
       return;
     }
     const parts=key.split('-');
@@ -1457,7 +1465,8 @@ function updateAll(){
     totalProt+=protVal*cnt;
     totalFat+=fatVal*cnt;
     totalCount+=cnt;
-    for(let i=0;i<cnt;i++) tags.push({key,name:f[0],hc:hcVal,prot:protVal});
+    tags.push({key,name:f[0],hc:round1(hcVal*cnt),prot:round1(protVal*cnt),cnt,
+               qtyStr:tagQtyStr(f[1],customQtyDisplay[key],f[5]&&f[5].startsWith&&f[5].startsWith('EDIT')?f[5]:'',cnt)});
   });
 
   const hcEl=document.getElementById('total-hc');
@@ -1478,9 +1487,39 @@ function updateAll(){
     if(wrap) wrap.classList.remove('has-items');
   } else {
     box.innerHTML=tags.map(t=>`<span class="sel-tag" onclick="removeOneTag('${t.key}')">
-      ${t.name}<span class="pts">(${t.hc>0?t.hc+'pts':'0pts'}${t.prot>0?', '+String(t.prot).replace('.',',')+' g prot':''})</span><span class="rm">×</span></span>`).join('');
+      ${t.name} ${t.qtyStr?`<span class="qty-mini">${t.qtyStr}</span> `:''}<span class="pts">(${t.hc>0?String(t.hc).replace('.',',')+'pts':'0pts'}${t.prot>0?', '+String(t.prot).replace('.',',')+'g prot':''})</span><span class="rm">×</span></span>`).join('');
     if(wrap) wrap.classList.add('has-items');
   }
+}
+
+
+function tagQtyStr(qtyBase, customDisplay, editStr, cnt){
+  // Determinar gramos/ml por porción actual y unidad
+  let perPortionGrams = null, unit = 'g';
+  // Si hay customQty (editado), usar ese valor como gramos por porción
+  // editStr formato: EDIT:base:unit:...
+  if(editStr){
+    const parts = editStr.split(':');
+    if(parts.length>=3){ unit = parts[2]; }
+  }
+  // Extraer gramos de la cantidad mostrada actual (custom o base)
+  const src = customDisplay || qtyBase;
+  // Buscar (NNNg) o (NNNml) o "NNNg"/"NNNml"
+  let m = src.match(/\((\d+(?:\.\d+)?)\s*(g|ml)\)/) || src.match(/(\d+(?:\.\d+)?)\s*(g|ml)\b/);
+  if(m){
+    perPortionGrams = parseFloat(m[1]);
+    unit = m[2];
+  }
+  // ¿Es por unidades? Detectar "unidad"/"u" en el texto
+  const isUnit = /unidad/i.test(src);
+
+  if(perPortionGrams !== null){
+    const totalG = round1(perPortionGrams * cnt);
+    const gStr = Number.isInteger(totalG) ? String(totalG) : String(totalG).replace('.',',');
+    return gStr + unit;
+  }
+  // Sin gramos detectables → mostrar "Nx"
+  return cnt + '×';
 }
 
 function removeOneTag(key){
@@ -1514,8 +1553,8 @@ function removeOneTag(key){
   const f=day.groups[gi].foods[fi];
   row.className=cnt>0?'selected':'';
   const nameCell=row.cells[0];
-  if(cnt>0){const b=nameCell.querySelector('.count-badge');if(b)b.textContent=cnt;else nameCell.innerHTML=f[0]+`<span class="count-badge">${cnt}</span>`;}
-  else nameCell.textContent=f[0];
+  if(cnt>0){const b=nameCell.querySelector('.count-badge');if(b)b.textContent=cnt;else nameCell.innerHTML=wrapFruitName(f[0])+`<span class="count-badge">${cnt}</span>`;}
+  else nameCell.innerHTML=wrapFruitName(f[0]);
 }
 
 function resetAll(){
@@ -1807,6 +1846,10 @@ function showFruitPopup(btn, type) {
       title: 'Frutas desecadas con los mismos puntos',
       text: 'En igual cantidad de gramos, estas frutas desecadas tienen aproximadamente los mismos hidratos de carbono:<br><br><strong>🟤 Ciruela pasa &nbsp;·&nbsp; 🍑 Orejón de durazno &nbsp;·&nbsp; 🍐 Orejón de pera &nbsp;·&nbsp; 🍇 Pasas de uva &nbsp;·&nbsp; 🍑 Higo seco &nbsp;·&nbsp; 🍎 Manzana desecada &nbsp;·&nbsp; 🌴 Dátiles &nbsp;·&nbsp; 🍑 Orejón de damasco</strong><br><br><span style="font-size:11px;color:#8896A8;">⚠️ Las frutas desecadas concentran mucho más azúcar por volumen que las frescas — tené en cuenta las porciones.</span>'
     },
+    vegetales: {
+      title: 'Hortalizas con los mismos puntos (≈5 pts / 100g)',
+      text: 'En igual cantidad de gramos, estas hortalizas aportan aproximadamente los mismos hidratos de carbono.<br><br><span style="font-size:12px;line-height:1.7;">Acelga · Achicoria · Ají · Alcaucil · Apio · Arvejas frescas · Berenjena · Berro · Brócoli · Brotes · Cebolla · Chauchas · Coliflor · Espinaca · Espárrago · Habas · Hinojo · Hongos · Kale · Lechuga · Nabo · Palmitos · Pepino · Puerro · Rábano · Rabanito · Remolacha · Repollo · Repollito de Bruselas · Rúcula · Tomate · Zanahoria · Zapallo · Zapallito · Zucchini</span><br><br><span style="font-size:11px;color:#8896A8;">⚠️ Limitá su consumo en la última comida antes del ejercicio — su fibra puede enlentecer el vaciamiento gástrico.</span>'
+    },
     tuberculos: {
       title: 'Vegetales feculentos con los mismos puntos (≈20 pts / 100g)',
       text: 'En igual cantidad de gramos, estos alimentos tienen aproximadamente los mismos hidratos de carbono:<br><br><strong>🥔 Papa &nbsp;·&nbsp; 🍠 Batata / Boniato / Camote &nbsp;·&nbsp; 🌽 Choclo &nbsp;·&nbsp; 🍌 Plátano &nbsp;·&nbsp; 🟤 Mandioca</strong><br><br><span style="font-size:11px;color:#8896A8;">⚠️ A diferencia de la banana (fruta), el plátano se comporta nutricionalmente más como un vegetal feculento — menos dulce, mayor almidón, índice glucémico más moderado.</span>'
@@ -1853,6 +1896,7 @@ const FRUIT_CLICKABLE = {
   'Banana': 'banana',
   'Uvas': 'banana',
   'Higo': 'banana',
+  'Calabaza / Zapallo': 'vegetales',
   'Papa': 'tuberculos',
   'Batata / Boniato': 'tuberculos',
   'Choclo': 'tuberculos',
