@@ -787,10 +787,9 @@ function addComp(ckey, compKey, ci){
   row.className = 'selected';
   const nameCell = row.cells[0];
   const badge = nameCell.querySelector('.count-badge');
-  const noteTxt = makeNoteHTML(f[5]);
-  const baseName = f[0];
+  const noteW = getWarnText(f[5]);
   if(badge) badge.textContent = cnt;
-  else nameCell.innerHTML = baseName + noteTxt + `<span class="count-badge">${cnt}</span>`;
+  else nameCell.innerHTML = wrapCompName(f[0],noteW) + `<span class="count-badge">${cnt}</span>`;
 }
 
 const DAYS=[
@@ -1100,7 +1099,7 @@ function buildUI(){
             ? `<span class="qty-text">${dispQtyC} <button class="edit-qty-btn" onclick="event.stopPropagation();openEditQtyComp(this,'${ckey}','${compKey}',${ci},${epC[1]},'${epC[2]}',${epC[3]},${epC[4]},${f[3]||0})" title="Editar cantidad">✏️</button></span>`
             : `<span class="qty-text">${f[1]}</span>`;
           return `<tr id="row-${ckey}" class="${cnt>0?'selected':''}" onclick="addComp('${ckey}','${compKey}',${ci})">
-            <td>${f[0]}${hasNote?`<span class="comp-note" style="color:#B45309">${warnText}</span>`:''}${cnt>0?`<span class="count-badge">${cnt}</span>`:''}</td>
+            <td>${wrapCompName(f[0],warnText)}${cnt>0?`<span class="count-badge">${cnt}</span>`:''}</td>
             <td>${qtyCellC}</td>
             <td class="c" id="prot-${ckey}" style="color:var(--green-600);font-weight:600">${curProtC>0?(String(curProtC).replace('.',','))+'g':'—'}</td>
             <td class="c"><span class="pts-num" style="font-size:13px" id="pts-${ckey}">${curHCC>0?curHCC:'—'}</span></td>
@@ -1541,9 +1540,9 @@ function removeOneTag(key){
     const f = comp.items[ci];
     row.className = cnt>0?'selected':'';
     const nameCell=row.cells[0];
-    const noteTxtC=makeNoteHTML(f[5]);
-    if(cnt>0){const b=nameCell.querySelector('.count-badge');if(b)b.textContent=cnt;else nameCell.innerHTML=f[0]+noteTxtC+`<span class="count-badge">${cnt}</span>`;}
-    else nameCell.innerHTML=f[0]+noteTxtC;
+    const noteWC=getWarnText(f[5]);
+    if(cnt>0){const b=nameCell.querySelector('.count-badge');if(b)b.textContent=cnt;else nameCell.innerHTML=wrapCompName(f[0],noteWC)+`<span class="count-badge">${cnt}</span>`;}
+    else nameCell.innerHTML=wrapCompName(f[0],noteWC);
     return;
   }
   const parts=key.split('-');
@@ -1660,9 +1659,9 @@ function applyEditComp(ckey,compKey,ci,baseQty,unit,hcPerBase,protPerBase,fatPer
       const nameCell=row.cells[0];
       if(!nameCell.querySelector('.count-badge')){
         const f2=COMPLEMENTS[compKey]?COMPLEMENTS[compKey].items[ci]:null;
-        const noteHTML=f2?makeNoteHTML(f2[5]):'';
-        const baseName=f2?f2[0]:nameCell.textContent;
-        nameCell.innerHTML=baseName+noteHTML+`<span class="count-badge">1</span>`;
+        const noteW2=f2?getWarnText(f2[5]):'';
+        const baseName=f2?wrapCompName(f2[0],noteW2):nameCell.textContent;
+        nameCell.innerHTML=baseName+`<span class="count-badge">1</span>`;
       }
     }
     row.style.background='#DBEAFE';
@@ -1820,11 +1819,39 @@ function makeNoteHTML(nota) {
   return w ? `<span class="comp-note" style="color:#B45309">${w}</span>` : '';
 }
 
+
+let currentCompNotePopup = null;
+function closeCompNotePopup(){
+  if(!currentCompNotePopup) return;
+  const el=currentCompNotePopup; currentCompNotePopup=null;
+  el.style.transition='opacity 0.18s,transform 0.18s';
+  el.style.opacity='0';
+  el.style.transform='translate(-50%,-50%) scale(0.88)';
+  if(document.activeElement) document.activeElement.blur();
+  setTimeout(()=>{ if(el.parentNode) el.remove(); },190);
+}
+function showCompNote(btn, noteText){
+  if(currentCompNotePopup){ const wb=currentCompNotePopup._b; closeCompNotePopup(); if(wb===btn) return; }
+  const pop=document.createElement('div');
+  pop.setAttribute('data-compnote-popup','1');
+  pop.style.cssText='position:fixed;z-index:9999;background:white;border:1.5px solid #FFD9A8;border-radius:14px;box-shadow:0 8px 30px rgba(4,44,83,0.2);padding:1rem 1.1rem;width:260px;left:50%;top:50%;transform:translate(-50%,-50%);animation:popInCenter 0.22s cubic-bezier(0.34,1.56,0.64,1);';
+  pop.innerHTML='<div style="display:flex;align-items:flex-start;gap:6px;"><p style="font-size:12.5px;color:#7A4A2A;line-height:1.6;margin:0;flex:1;">'+noteText+'</p><button onclick="event.stopPropagation();closeCompNotePopup()" style="background:none;border:none;cursor:pointer;color:#C99;font-size:16px;line-height:1;flex-shrink:0;outline:none;">×</button></div>';
+  pop._b=btn;
+  pop.addEventListener('click', function(ev){ ev.stopPropagation(); closeCompNotePopup(); });
+  document.body.appendChild(pop);
+  currentCompNotePopup=pop;
+}
+function wrapCompName(name, noteText){
+  if(!noteText) return name;
+  const safe = noteText.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+  return `<button onclick="event.stopPropagation();showCompNote(this,'${safe}')" style="background:none;border:none;cursor:pointer;color:inherit;font:inherit;font-weight:600;padding:0;text-align:left;outline:none;">${name}</button>`;
+}
+
 let currentFruitPopup = null;
 let _justClosedModal = false; // bloquea addFood cuando se acaba de cerrar un modal
 
 function isAnyModalOpen(){
-  return !!(currentTooltip || currentEditPopup || currentFatPopup || currentFruitPopup || currentKcalPopup || _justClosedModal);
+  return !!(currentTooltip || currentEditPopup || currentFatPopup || currentFruitPopup || currentKcalPopup || currentCompNotePopup || _justClosedModal);
 }
 
 function showFruitPopup(btn, type) {
@@ -1859,14 +1886,8 @@ function showFruitPopup(btn, type) {
   if(!d) return;
   const rect = btn.getBoundingClientRect();
   const pop = document.createElement('div');
-  pop.style.cssText = `position:fixed;z-index:9999;background:white;border:1.5px solid #B5D4F4;border-radius:14px;box-shadow:0 8px 30px rgba(4,44,83,0.2);padding:1rem 1.1rem;width:270px;`;
+  pop.style.cssText = `position:fixed;z-index:9999;background:white;border:1.5px solid #B5D4F4;border-radius:14px;box-shadow:0 8px 30px rgba(4,44,83,0.2);padding:1rem 1.1rem;width:270px;opacity:0;`;
   pop.setAttribute('data-fruit-popup','1');
-  let left = rect.left;
-  let top = rect.bottom + 8;
-  if(left + 280 > window.innerWidth) left = window.innerWidth - 285;
-  if(top + 180 > window.innerHeight) top = rect.top - 190;
-  pop.style.left = left + 'px';
-  pop.style.top = top + 'px';
   pop.innerHTML = `
     <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
       <p style="font-size:13px;font-weight:600;color:#0C447C;margin:0;flex:1;">${d.title}</p>
@@ -1874,12 +1895,29 @@ function showFruitPopup(btn, type) {
     </div>
     <p style="font-size:12px;color:#2C3A4A;line-height:1.7;margin:0;">${d.text}</p>`;
   pop._triggerBtn = btn;
-  pop.classList.add('popup-entering');
   pop.addEventListener('click', function(ev){
     ev.stopPropagation();
     closeFruitPopup();
   });
+  // Insertar invisible para medir dimensiones reales
   document.body.appendChild(pop);
+  const ph = pop.offsetHeight;
+  const pw = pop.offsetWidth;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  // Posicionar: intentar cerca del botón, ajustar si no cabe
+  let left = rect.left;
+  let top  = rect.bottom + 8;
+  if(left + pw > vw - 8) left = vw - pw - 8;
+  if(left < 8) left = 8;
+  if(top + ph > vh - 8){
+    top = rect.top - ph - 8;          // arriba del botón
+    if(top < 8) top = Math.max(8, (vh - ph) / 2); // centrar verticalmente si sigue sin caber
+  }
+  pop.style.left = left + 'px';
+  pop.style.top  = top  + 'px';
+  pop.style.opacity = '';
+  pop.classList.add('popup-entering');
   currentFruitPopup = pop;
 }
 
@@ -1987,6 +2025,9 @@ document.addEventListener('click',function(e){
 
   if(currentKcalPopup && !e.target.closest('[data-kcal-popup]') && !e.target.closest('#kcal-btn')){
     closeKcalPopup(); closed = true;
+  }
+  if(currentCompNotePopup && !e.target.closest('[data-compnote-popup]') && !e.target.closest('[onclick*="showCompNote"]')){
+    closeCompNotePopup(); closed = true;
   }
   if(closed){
     _justClosedModal = true;
